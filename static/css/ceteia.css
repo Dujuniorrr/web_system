@@ -1,0 +1,128 @@
+.sidebar, .sidebar .sidebar-brand-wrapper, 
+.navbar .navbar-menu-wrapper,
+.navbar .navbar-brand-wrapper,
+.navbar, .modal-header, .toggler, .nav{
+    background-color: #124442 !important;
+}
+
+.sidebar .nav .nav-item.active > .nav-link, .sidebar .nav:not(.sub-menu) > .nav-item:hover:not(.nav-category):not(.account-dropdown) > .nav-link, .nav-link:hover .menu-title, .label-img{
+    background-color: #f8f8f7 !important;
+}
+.sidebar .nav .nav-item .menu-icon{
+    background-color: #f8f8f8 !important;
+}
+
+.sidebar .nav .nav-item.active > .nav-link::before {
+    background-color: #277579 !important;
+}
+
+.content-wrapper, .bg-gray-dark, footer{
+    background-color: rgb(211, 209, 209) !important;
+}
+
+.card, .modal-footer, .modal-body{
+    background-color: rgb(231, 233, 233) !important;
+
+}
+
+
+.sidebar .sidebar-brand-wrapper .sidebar-brand img{
+    width: 200px !important;
+    height: 45px !important;
+}
+
+.navbar .navbar-brand-wrapper .navbar-brand.brand-logo-mini img{
+    width: 45px !important;
+    height: 45px;
+}
+
+.sidebar-icon-only .sidebar .sidebar-brand-wrapper .brand-logo-mini{
+    padding: 0px;
+}
+
+.sidebar .sidebar-brand-wrapper .sidebar-brand{
+    padding: 0px !important;
+    text-align: center !important;
+}
+
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown .dropdown-item p,
+.preview-list .preview-item .preview-item-content .preview-subject, .table thead th, .jsgrid .jsgrid-table thead th, .modal-title{
+    color: white !important;
+}
+
+.navbar .navbar-menu-wrapper{
+    box-shadow: none !important;
+}
+
+.navbar .navbar-menu-wrapper .navbar-toggler,
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item .nav-link .navbar-profile .navbar-profile-name,
+.navbar .navbar-menu-wrapper .navbar-nav.navbar-nav-right,
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown,
+.sidebar .nav .nav-item.profile .profile-desc .profile-name h5,
+.sidebar .nav .nav-item.profile .profile-desc .profile-name span,
+.sidebar .nav .nav-item.profile .profile-desc .mdi-dots-vertical,
+.brand-logo, .brand-logo-mini,
+.sidebar .nav .nav-item .nav-link, .toggler{
+    color: #f1f1f1 !important;
+}
+
+.toggler{
+    border: 0px;
+}
+
+.toggler-left{
+    display: none;
+}
+
+@media(min-width: 935px){
+    .toggler-left{
+        display: block;
+    }
+}
+.preview-list .preview-item .preview-item-content p,
+h1, h2, h3, h4, h5, h6, .flex-grow p, .modal-body{
+       color: #0f1015 !important;
+}
+
+.sidebar .nav .menu-items .nav-link .menu-icon i, .sidebar .nav .nav-item.profile .profile-desc .dropdown-menu .dropdown-item.preview-item .preview-thumbnail .preview-icon i, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .dropdown-menu.navbar-dropdown .dropdown-item i{
+    color: #124442 !important;
+}
+
+.sidebar-offcanvas.active{
+    left: 0 !important;
+}
+
+.sidebar-offcanvas{
+    left: -244px !important;
+}
+.sidebar .nav .nav-item a:hover, .dropdown-item .preview-item, .sidebar .nav .nav-item.active > .nav-link .menu-title{
+    color: black !important;
+}
+
+.sidebar .nav .nav-item{
+    margin-bottom: 5px;
+}
+
+.btn-yellow{
+    background-color: #145856;
+    color: rgb(255, 249, 249);
+}
+
+.btn-yellow:hover{
+    background-color: #124442;
+    color: rgb(255, 255, 255);
+}
+
+.btn-brown{
+    background-color: #145856;
+    
+}
+
+.btn-brown:hover{
+    background-color:#124442;
+    
+}
+
+.navbar-toggler:hover, .navbar-toggler:focus,.navbar-toggler::after, .navbar-toggler::before{
+    border: 0px !important;
+}

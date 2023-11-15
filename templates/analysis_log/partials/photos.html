@@ -1,0 +1,13 @@
+<div id="photos" class="d-none d-lg-block col-3">
+    <div class="card">
+      <div class="card-header bg-dark d-flex justify-content-between" id="photos">
+        <span>Fotos</span>
+        <button id="close-photos" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+      </div>
+      <div class="p-2" style="max-height: 115vh; overflow-y: auto;">
+        {% for analysis_log in analysis_logs %}
+        <img src="{{ analysis_log.captured_img_path.url }}" alt="" width="100%" class="mb-2">
+        {% endfor %}
+      </div>
+    </div>
+  </div>

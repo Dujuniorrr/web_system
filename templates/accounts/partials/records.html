@@ -1,0 +1,101 @@
+<div id="records" class="col-12">
+
+  <div class="card mb-2">
+    <div class="d-flex ms-3 p-1 text-dark align-items-center">
+      <span class="p-1 m-1">Filtrar por:</span>
+      <form action="">
+        <div class="border border-1 border-dark px-3 rounded-2">
+          <label for="min_date" class="form-label">Data min.</label>
+          <input class="bg-transparent border border-0" type="date" name="min_date" id="min_date">
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <div class="mt-4 alert alert-danger alert-white rounded d-flex justify-content-between">
+    <div class="d-flex align-items-center"><span class="icon me-1"><i
+          class="fa-solid fa-circle-exclamation"></i></span><strong id="type-message" class="me-2">Erro! </strong><span id="content-message">O tipo de usuário informado é inválido!</span></div>
+    <div class="text-center align-self-center"><button id="close-message"
+        class="modal-close-alert btn-sm btn-danger text-light rounded-circle"><i class="fa fa-times-circle text-light"
+          aria-hidden="true"></i></button></div>
+  </div>
+
+  <div id="main" class="card">
+    <div class="card-body p-0">
+
+      <!-- <p class="card-description"> Add class <code>.table-bordered</code>
+        </p> -->
+      <div class="table-responsive rounded-3">
+        <table class="table table-striped-custom">
+          <thead>
+            <tr class="table-dark">
+              <th> <i class="fa fa-user m-1" aria-hidden="true"></i> Nome </th>
+
+              <th>
+                <i class="fa-solid fa-envelope m-1"></i> Email
+              </th>
+              <th>
+                <i class="fa fa-black-tie m-1" aria-hidden="true"></i> Função
+              </th>
+              <th class="text-center">
+                <i class="fa fa-toggle-on m-1" aria-hidden="true"></i> Status
+              </th>
+              <!-- <th>  <i class="fa-solid fa-eye m-1" aria-hidden="true" ></i> Visualizar </th> -->
+
+              <th class="text-center"> <i class="fa-solid fa-eye m-1 " aria-hidden="true"></i> Ações </th>
+            </tr>
+          </thead>
+          <tbody class="text-dark">
+            {% for user in users%}
+            <tr>
+              <td class="d-flex align-items-center border-0">
+                {% if user.is_superuser %}
+                <img class="img-xs rounded-circle border bg-dark border-1 border-dark shadow"
+                  src="/media/profile_imgs/icon-profile.png" alt="">
+                {% else %}
+                <img class="img-xs rounded-circle  bg-dark  border border-dark shadow"
+                  src="{{user.clientprofile.img_path.url}}" alt="">
+
+                {% endif %} <span class="ms-3">{{ user.first_name }} {{user.last_name}}</span>
+              </td>
+              <td> {{ user.email }} </td>
+              <td> {% if user.is_superuser %}
+                Admin
+                {% else %}
+                Cliente
+                {% endif %}
+              </td>
+              <td class="text-center"> {% if user.is_active %}
+                <div class="rounded-3 active-user p-2 text-center">Ativo</div>
+                {% else %}
+                <div class="rounded-3 desactive-user p-2 text-center">Desativado</div>
+                {% endif %}
+              </td>
+              <!-- <td> {{ analysis_log.pressure }} Pa</td> -->
+              <td class="text-center">
+
+                <a href="/usuarios/desativar/{{user.id}}" type="button" class="btn btn-danger">
+                  <i class="fa-solid fa-toggle-off"></i> Desativar
+                </a>
+
+                <a href="/usuarios/ativar/{{user.id}}" type="button" class="btn btn-success">
+                  <i class="fa-solid fa-toggle-on"></i> Ativar
+                </a>
+
+
+                <button class="openModalView btn btn-yellow " type="button" data-bs-toggle="modal"
+                  data-bs-captured-img="{{ analysis_log.captured_img_path.url }}"
+                  data-bs-processed-img="{{ analysis_log.processed_img_path.url }}" data-bs-target="#viewModal" {% if user.is_superuser %} disabled {% endif %}>
+                  <i class="fa-solid fa-eye m-0" aria-hidden="true"></i> Visualizar
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

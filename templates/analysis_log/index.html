@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Monitoramento de Pragas
+{% endblock %}
+
+{% block content %}
+
+  <div class="mb-3 col-12 card-header py-3 px-4 d-md-inline-flex align-items-center justify-content-between d-sm-block ">
+ 
+    <div class="align-text-center d-flex align-items-center mb-2">
+       <div class="d-flex">
+        <div class="shadow bg-dark rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height: 40px;">
+          <i class="fa-solid fa-camera-retro text-light" style="color: #c6a436  !important"></i>
+        </div>
+       </div>
+       <div class="ms-3">
+        <h4 class="card-title text-dark m-0"> 
+          Monitoramento de Pragas 
+      </h4>
+      <p class="text-black m-0 text-justify">
+        Aqui você consegue visualizar os dados do monitoramento diário realizado por sua armadilha!
+      </p>
+       </div>
+     </div>
+    
+    <div class="col-12 col-md-auto d-flex justify-content-end mb-2 ">
+      <button id="select-trap" class="btn btn-dark d-flex btn-click"  role="button" data-bs-toggle="dropdown" aria-expanded="false" >Armadilha 1 <i class="mdi mdi-menu-down d-block m-0"></i> </button>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+      <li><a class="dropdown-item" href="#">Armadilha 1</a></li>
+      <li><a class="dropdown-item" href="#">Armadilha 2</a></li>
+      <li><a class="dropdown-item" href="#">Armadilha 3</a></li>
+    </ul>
+    </div>
+  </div>
+  
+  <div id="container-content" class="row mx-2">
+
+      {% include 'analysis_log/partials/records.html' %} 
+
+      {% include 'analysis_log/partials/photos.html' %} 
+
+  </div>
+
+{% include 'analysis_log/partials/modal.html' %} 
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+
+  
+  closePhotos();
+
+  $(document).ready(function () {
+    $(".openModalView").click(function () {
+      var capturedImgSrc = $(this).attr("data-bs-captured-img");
+      var processedImgSrc = $(this).attr("data-bs-processed-img");
+  
+      $("#modalCapturedImg").attr("src", capturedImgSrc);
+      $("#modalProcessedImg").attr("src", processedImgSrc);
+      
+    });
+  
+    $(".close").click(function () {
+      $("#viewModal").css("display", "none");
+    });
+  
+    $(window).click(function (e) {
+      if (e.target.id === "viewModal") {
+        $("#viewModal").css("display", "none");
+      }
+    });
+  });
+
+  $("#closeView").click(function(){
+      $("#modalCapturedImg").attr("src", '');
+      $("#modalProcessedImg").attr("src", '');
+  });
+</script>
+{% endblock %}

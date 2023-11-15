@@ -1,0 +1,180 @@
+/* =======================================================================
+Template Name: Youtubers
+Author:  SmartEye Technologies
+Author URI: www.smarteyeapps.com
+Version: 1.0
+coder name:Prabin Raja
+Description: This Template is created for Youtubers
+======================================================================= */
+/* ===================================== Import Variables ================================== */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700);
+@import url(https://fonts.googleapis.com/css?family=Arimo:300,400,400italic,700,700italic);
+/* ===================================== Basic CSS ==================================== */
+* {
+  margin: 0px;
+  padding: 0px;
+  list-style: none; 
+}
+
+html, .container, .row, .form-02-main{
+  min-height: 100vh; 
+}
+
+
+body{
+  /* background: linear-gradient(-45deg, #4b3c0e, #e0ba3e,#665313, #b1922b);
+   */
+  background-color: #0f1015;
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  font-family: "Open Sans";
+  min-height: 100vh; 
+}
+
+img {
+  max-width: 100%; 
+}
+
+a, span .login-text{
+  text-decoration: none;
+  outline: none;
+  color: black ;
+  font-weight: 600;
+}
+
+a:hover {
+  color:#796525 
+}
+
+ul {
+  margin-bottom: 0;
+  padding-left: 0; 
+}
+
+ol,ul{
+  margin:0px;
+  padding:0px;
+}
+
+a:hover,
+a:focus,
+input,
+textarea {
+  text-decoration: none;
+  outline: none; 
+}
+
+.form-02-main{
+  background-repeat:no-repeat;
+  background-position:center;
+  position:relative;
+  z-index:2;
+  overflow:hidden;
+  height: 100%;
+}
+
+.container{
+  height: 100% !important;
+}
+
+._lk_de{
+  background-repeat:no-repeat;
+  background-size:cover;
+  /* padding: 0px 0px; */
+  position:relative;
+
+}
+
+.form-03-main{
+  width:500px;
+  display:block;
+  margin:20px auto;
+  padding: 10px 30px 1px;
+  background: rgb(231, 233, 233) ;
+  border-radius:6px;
+  z-index:9;
+}
+
+.logo{
+  display:block;
+  margin: 0px auto;
+  width:140px;
+  height:140px;
+}
+
+#login-message{
+  margin: 10px 0px;
+  display: none;
+  padding: 10px;
+  border: 1px solid rgb(228, 103, 103);
+  border-radius: 3px;
+  color: rgb(146, 37, 37);
+  background-color: rgb(248, 161, 161);
+}
+
+.logo img{
+  width: 100%;
+  height: 100%;
+}
+.form-group{
+  padding: 10px 0px;
+  display:inline-block;
+  width:100%;
+  position:relative;
+}
+
+.form-group:last-of-type{
+  padding: 30px 0px;
+}
+.form-group p{
+  margin:0px;
+}
+
+.form-control{
+  min-height:45px;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  padding: 10px 15px;
+  border-radius:20px;
+  border: 2px solid #c6a436 ;
+}
+
+.checkbox{
+  display:flex;
+  justify-content:space-around;
+}
+
+._btn_04 {
+    display: inline-block;
+    width: 100%;
+    padding: 12px 0px;
+    background: #c6a436 ;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 16px;
+    color: #000000 !important;
+    cursor: pointer;
+}
+
+._btn_04:hover{
+  background-color: #a38624 ;
+}
+
+._btn_04 a{
+  font-size:15px;
+  color: #000000;
+}
+
+
+@media screen and (max-width: 600px) {
+  .form-03-main{
+    width: 100%;
+  }
+}
+
+.label{
+  color: black;
+  margin: 10px 0px;
+  font-weight: 600;
+}
+

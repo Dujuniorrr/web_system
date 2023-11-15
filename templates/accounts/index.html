@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+
+Gerenciamento de Usuários
+
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-3 col-12 card-header py-3 px-4 d-md-inline-flex align-items-center justify-content-between d-sm-block ">
+ 
+    <div class="align-text-center d-flex align-items-center mb-2">
+       <div class="d-flex">
+        <div class="shadow bg-dark rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height: 40px;">
+          <i class="fa fa-user text-light" style="color: #c6a436  !important"></i>
+        </div>
+       </div>
+       <div class="ms-3">
+        <h4 class="card-title text-dark m-0"> 
+          Listagem de Usuários
+      </h4>
+      <p class="text-black m-0 text-justify">
+        Aqui você consegue visualizar e gerenciar os usuários cadastrados no sistema!
+      </p>
+       </div>
+     </div>
+    
+    <div class="col-12 col-md-auto d-flex justify-content-end mb-2 ">
+      <button id="add-user" class="btn btn-dark d-flex btn-click" data-bs-toggle="modal" data-bs-target="#addModal"> <i class="fa fa-plus" aria-hidden="true"></i> Adicionar Usuário </button>
+    </div>
+  </div>
+  
+  <div id="container-content" class="row mx-2">
+    
+      {% include 'accounts/partials/records.html' %} 
+  </div>
+
+  {% include 'accounts/partials/modal_add.html' %} 
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+   
+  formartCPF('id_cpf');
+  formartPhone('id_phone');
+
+  $(document).on('click', '#btn-add-form', function (event) {
+      verifyResponse("form-add", "main", "addModal",'error-message', ()=>{
+        changeVal('d-block', 'd-none');
+      })
+  });
+  
+
+  resetForm('.btn-close-add', 'formAdd', 'form-add', ()=>{
+    changeVal('d-block', 'd-none');
+  });
+ 
+  setForrmType();
+</script>
+{% endblock %}

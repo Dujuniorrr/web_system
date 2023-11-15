@@ -1,0 +1,76 @@
+<div class="modal fade"  data-bs-backdrop="static" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+             <!-- <i class="fa fa-plus-circle me-1" aria-hidden="true"></i>  -->
+             Adicionar Usuário </h5>
+             <button type="button" class="btn-close btn-close-white btn-close-add" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-add" method="post" action="/usuarios/cadastrar">
+            {% csrf_token %}
+            <div class="row">
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3 form-group">
+                <label for="{{form.first_name.id_for_label}}" class="form-label">{{form.first_name.label}}</label>
+               {{form.first_name}}
+              </div>
+  
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  form-group">
+                <label for="{{form.last_name.id_for_label}}" class="form-label">{{form.last_name.label}}</label>
+                {{form.last_name}}
+              </div>
+
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  form-group">
+                <label for="{{form.email.id_for_label}}" class="form-label">{{form.email.label}}</label>
+                {{form.email}}
+              </div>
+
+             <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  form-group">
+                <label for="exampleInputPassword1" class="form-label">Tipo de Usuário</label>
+              <div class="d-flex">
+                <div class="form-check ps-0 form-check-inline d-flex align-items-center">
+                  <input id="admin-radio" class="form-check-input" type="radio" name="type"  value="admin" checked>
+                  <label class="mb-0"  for="admin-radio">Admin</label>
+                </div>
+                <div class="form-check form-check-inline  d-flex align-items-center">
+                  <input id="client-radio" class="form-check-input" type="radio" name="type"  value="client">
+                  <label class="mb-0" for="client-radio">Cliente</label>
+                </div>
+              </div>
+
+             </div>
+
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  d-none client-form form-group">
+                <label for="{{form.first_name.id_for_label}}" class="form-label">{{client_form.cpf.label}}</label>
+               {{client_form.cpf}}
+              </div>
+    
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  d-none client-form form-group">
+                <label for="{{client_form.phone.id_for_label}}" class="form-label">{{client_form.phone.label}}</label>
+               {{client_form.phone}}
+              </div>
+  
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  d-none client-form form-group">
+                <label for="{{client_form.address.id_for_label}}" class="form-label">{{client_form.address.label}}</label>
+               {{client_form.address}}
+              </div>
+
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  d-none client-form form-group">
+                <label for="{{client_form.birthday.id_for_label}}" class="form-label">{{client_form.birthday.label}}</label>
+               {{client_form.birthday}}
+              </div>
+
+              <div id="error-message">
+
+              </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeAdd" type="button" class="btn btn-dark btn-close-add" style="color:  #c6a436" data-bs-dismiss="modal"><i class="fa-solid fa-circle-xmark"></i>Fechar</button>
+        <button id="btn-add-form" class="btn text-dark" style="background:  #c6a436" > <i class="fa-solid fa-circle-right"></i> Adicionar </button>
+      </div>
+    </div>
+    
+  </div>

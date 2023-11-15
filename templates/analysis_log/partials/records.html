@@ -1,0 +1,56 @@
+<div id="records" class="col-12 col-lg-9">
+
+    <div class="card mb-2">
+      <div class="d-flex ms-3 p-1 text-dark align-items-center">
+        <span class="p-1 m-1">Filtrar por:</span>
+        <form action="">
+           <div class="border border-1 border-dark px-3 rounded-2">
+            <label for="min_date" class="form-label">Data min.</label>
+            <input class="bg-transparent border border-0" type="date" name="min_date" id="min_date">
+           </div>
+        </form>
+       
+      </div>
+    </div>
+    
+    <div id="main" class="card">
+      <div class="card-body p-0">
+    
+        <!-- <p class="card-description"> Add class <code>.table-bordered</code>
+        </p> -->
+        <div class="table-responsive rounded-3">
+          <table class="table table-striped-custom">
+            <thead>
+              <tr class="table-dark" >
+                <th> <i class="fa-solid fa-calendar-days m-1"></i> Data </th>
+                <th><i class="fa-solid fa-bug m-1"></i>  Número de Pragas </th>
+                <th>
+                    <i class="fa-solid fa-temperature-three-quarters m-1"></i> Temperatura 
+                </th>
+                <th> 
+                    <i class="fa-solid fa-gauge-simple-high m-1"></i> Pressão Atmosférica 
+                </th>
+                <th>  <i class="fa-solid fa-eye m-1" aria-hidden="true" ></i> Ações </th>
+              </tr>
+            </thead>
+            <tbody class="text-dark">
+                {% for analysis_log in analysis_logs%}
+              <tr id="{{analysis_log.id}}">
+                <td> {{ analysis_log.date | date:"d/m/Y H:i:s" }} </td>
+                <td> {{ analysis_log.pests_number }} pragas </td>
+                <td> {{ analysis_log.temperature }} °C</td>
+                <td> {{ analysis_log.pressure }} Pa</td>
+                <td class="text-center"> 
+
+                    <button class="openModalView btn btn-yellow" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-captured-img="{{ analysis_log.captured_img_path.url }}" data-bs-processed-img="{{ analysis_log.processed_img_path.url }}" data-bs-target="#viewModal">
+                        <i class="fa-solid fa-eye m-0" aria-hidden="true" ></i> Visualizar
+                    </button>
+                 </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
