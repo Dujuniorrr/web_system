@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+
+Perfil de Usuário
+
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+
+    <div id="message" class="mt-4 alert alert-danger alert-white rounded justify-content-between d-none">
+        <div class="d-flex align-items-center"><span class="icon me-1"><i
+                    class="fa-solid fa-circle-exclamation"></i></span><strong id="type-message" class="me-2">Erro!
+            </strong><span id="content-message">O tipo de usuário informado é inválido!</span></div>
+        <div class="text-center align-self-center"><button id="close-message"
+                class="btn-sm btn-danger text-light rounded-circle "><i class="fa fa-times-circle text-light"
+                    aria-hidden="true"></i></button></div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-7 col-lg-9 mb-4 ">
+            <div id="update" class="card shadow">
+                <div class="card-header bg-dark text-light">Informações Pessoais</div>
+                <div class="row justify-content-center mt-3 p-2">
+
+
+                    {% include 'accounts/partials/form_change_image.html' %}
+
+
+                    <div class="col-12 col-lg-9 justify-content-between px-3">
+
+                        <form action="/usuarios/editar" id="form-update" class="text-dark row ">
+
+                            {% csrf_token %}
+                            <input type="hidden" name="form" value="update">
+                            <input type="hidden" name="type" value='{% if profile %}client{% else %}admin{% endif %}'>
+                            {% include 'accounts/partials/form_user.html' %}
+
+                            {% include 'accounts/partials/form_client.html' %}
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-footer text-end">
+                    <button id="btn-add-form" class="btn text-dark" style="background:  #c6a436"> <i
+                            class="fa-solid fa-circle-right"></i> Atualizar Perfil </button>
+                </div>
+            </div>
+        </div>
+
+        {% include 'accounts/partials/form_change_password.html' %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+
+    formartCPF('id_cpf');
+    formartPhone('id_phone');
+    closeMessage();
+
+
+    $(document).on('click', '#btn-add-form', function (event) {
+        verifyResponse("form-update", "", "update", '', (type, msg) => {
+            func(type, msg);
+            formartCPF('id_cpf');
+            formartPhone('id_phone');
+            var usernameSpace = document.getElementById('username-space');
+            usernameSpace.textContent = document.getElementById('id_first_name').value + ' ' + document.getElementById('id_last_name').value
+        }, false);
+    });
+
+    $(document).on('click', '#btn-change-password', function (event) {
+        verifyResponse("form-change", "", "update", '', (type, msg) => {
+            func(type, msg)
+            if (type == true) {
+                var form = $('#form-change')[0]; // Obtém o formulário
+                form.reset();
+            }
+
+        }, false);
+    });
+
+      $('#select-file').change(function (event) {
+        verifyResponse("form-change-image", "", "update", '', (type, msg, response) => {
+            func(type, msg)
+            if (type == true) {
+                const imgs = document.querySelectorAll('.profile-img');
+                for(var img of imgs){
+                    console.log(response.img_path);
+                    img.src = response.img_path;
+                }
+            }
+
+        }, false);
+    });
+
+</script>
+{% endblock %}

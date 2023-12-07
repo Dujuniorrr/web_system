@@ -48,18 +48,21 @@ Gerenciamento de Usuários
    
   formartCPF('id_cpf');
   formartPhone('id_phone');
+  closeMessage();
 
+  triggerAction('control-btn', 'main', document.getElementsByName('csrfmiddlewaretoken')[0].value, func);
+  
   $(document).on('click', '#btn-add-form', function (event) {
       verifyResponse("form-add", "main", "addModal",'error-message', ()=>{
         changeVal('d-block', 'd-none');
       })
   });
   
-
   resetForm('.btn-close-add', 'formAdd', 'form-add', ()=>{
     changeVal('d-block', 'd-none');
   });
  
   setForrmType();
+  
 </script>
 {% endblock %}

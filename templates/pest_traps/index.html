@@ -2,177 +2,66 @@
 
 {% block content %}
 
-  
-<div id="chart-historic-average" class="container mb-5 col-12">
-    <div class="d-block card w-100 shadow d-block" >
-      <!-- <div class="card-header text-light fs-4 bg-black gradient-bg">
-        <div class="d-flex justify-content-between">
-          <a href="#chart-historic-average" class="text-white text-decoration-none">
-            <div class="d-flex align-items-center">
-              <i class="fa fa-star mb-2 me-2" aria-hidden="true"></i>
-              <h2 class="">Histórico de Avaliações</h2>
+
+<div class="container col-10 mb-5 mt-5">
+      <div id="" class="row col-12">
+        {% for trap in traps %}
+        <div class="col-xl-4 col-md-6 col-12 text-dark mb-4">
+
+          <a href="/monitoramentos/{{trap.id}}" class="card shadow text-decoration-none" >
+
+            <div class="p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                  Armadilha {{trap.name}}
+                </h3>
+              
+              </div>
+              <span class="text-dark created-at">Implantada em: {{trap.created_at.date }}</span>
+            </div>
+            <div class="card-body">
+
+              <div class="d-flex">
+                <div class="col-6 p-0 d-flex align-items-end">
+                 {% if trap.is_active %}
+                 <span class="btn btn-success rounded-pill" aria-disabled="true">
+                  <i class="fa-regular fa-circle-check"></i> Ativa
+                </span>
+                 {% else %}
+                 <span class="btn btn-danger rounded-pill" aria-disabled="true">
+                  <i class="fa-regular fa-circle-xmark"></i> Desativada
+                </span>
+                 {% endif %}
+                </div>
+                <div class="col-6 text-end">
+                  <i class="fa-solid fa-bug display-1" style="color: rgba(0, 0, 0, 0.822);"></i>
+                </div>
+              </div>
             </div>
           </a>
         </div>
-      </div> -->
-      <div id="dashboard-body d-none" class="card-body overflow-auto">
-            <h4 class="card-title mt-4">Monitoramento de Pragas</h4>
-          <div>
-            <canvas id="chart-1" style="height: 100px"></canvas>
-          </div>
+        {% endfor %}
 
-          <h4 class="card-title mt-4">Monitoramento de Temperatura</h4>
-
-          <div>
-            <canvas id="chart-2" style="height: 100px"></canvas>
-          </div>
-
-          <h4 class="card-title mt-4">Monitoramento de Pressão</h4>
-
-          <div>
-            <canvas id="chart-3" style="height: 100px"></canvas>
-          </div>
-      </div>
-    </div>
   </div>
+</div>
+
 
 {% endblock %}
-
-{% block js %}
 <script>
+  window.addEventListener('load', function () {
+    var pai = document.querySelector('#trap-container');
+    var filho = document.querySelector('#traps');
 
-    var data = [];
-    var labels = [];
+    // Obtém as dimensões do filho
+    var filhoWidth = filho.offsetWidth;
+    var filhoHeight = filho.offsetHeight;
 
-    fetch('/graficos/linha/pragas')
-    .then(response => {
-        if (!response.ok) {
-        throw new Error('Erro na solicitação: ' + response.status);
-        }
-        
-        return response.json();
-    })
-    .then(json => {
-        var ctx = document.getElementById('chart-1').getContext('2d');
-
-        var data = {
-            labels: json.dates, // Rótulos dos pontos no eixo X
-            datasets: [{
-            label: 'Número de pragas',
-            data: json.counts, // Valores dos pontos no eixo Y
-            fill: true, // Não preencher a área abaixo da linha
-            backgroundColor: 'rgba(147, 84, 1, 0.342)',
-            borderColor: '#c6a436', // Cor da linha
-            borderWidth: 2 // Espessura da linha
-            }]
-        };
-
-        var options = {
-            responsive: true, 
-            scales: {
-            y: {
-                beginAtZero: true
-            }
-            }
-        };
-
-        var lineChart = new Chart(ctx, {
-            type: 'line',
-            data: data,
-            options: options
-        });
-
-    })
-    .catch(error => {
-        console.error('Erro na solicitação:', error);
-    });
-
-
-    fetch('/graficos/linha/temperatura')
-    .then(response => {
-        if (!response.ok) {
-        throw new Error('Erro na solicitação: ' + response.status);
-        }
-        
-        return response.json();
-    })
-    .then(json => {
-        var ctx = document.getElementById('chart-2').getContext('2d');
-
-        var data = {
-            labels: json.dates, // Rótulos dos pontos no eixo X
-            datasets: [{
-            label: 'Temperatura Média',
-            data: json.counts, // Valores dos pontos no eixo Y
-            fill: true, // Não preencher a área abaixo da linha
-            backgroundColor: 'rgba(63, 100, 15, 0.658)',
-            borderColor: 'rgb(134, 185, 66)', // Cor da linha
-            borderWidth: 2 // Espessura da linha
-            }]
-        };
-
-        var options = {
-            responsive: true, 
-            scales: {
-            y: {
-                beginAtZero: true
-            }
-            }
-        };
-
-        var lineChart = new Chart(ctx, {
-            type: 'line',
-            data: data,
-            options: options
-        });
-
-    })
-    .catch(error => {
-        console.error('Erro na solicitação:', error);
-    });
-
-    fetch('/graficos/linha/pressao')
-    .then(response => {
-        if (!response.ok) {
-        throw new Error('Erro na solicitação: ' + response.status);
-        }
-        
-        return response.json();
-    })
-    .then(json => {
-        var ctx = document.getElementById('chart-3').getContext('2d');
-
-        var data = {
-            labels: json.dates, // Rótulos dos pontos no eixo X
-            datasets: [{
-            label: 'Pressão Atmosférica Média',
-            data: json.counts, // Valores dos pontos no eixo Y
-            fill: true, // Não preencher a área abaixo da linha
-            backgroundColor: 'rgba(165, 26, 26, 0.37)',
-            borderColor: 'rgb(147, 23, 1)', // Cor da linha
-            borderWidth: 2 // Espessura da linha
-            }]
-        };
-
-        var options = {
-            responsive: true, 
-            scales: {
-            y: {
-                beginAtZero: true
-            }
-            }
-        };
-
-        var lineChart = new Chart(ctx, {
-            type: 'line',
-            data: data,
-            options: options
-        });
-
-    })
-    .catch(error => {
-        console.error('Erro na solicitação:', error);
-    });
+    // Atualiza as dimensões do pai
+    pai.style.width = filhoWidth + 'px';
+    pai.style.height = filhoHeight + 'px';
+  });
 </script>
+{% block js %}
+
 
 {% endblock %}

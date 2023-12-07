@@ -74,7 +74,7 @@ function formartCPF(element){
                 cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
             }
 
-    
+            console.log(cpf.length);
             $(this).val(cpf);
         });
     });
@@ -103,7 +103,7 @@ function formartPhone(element){
 
 
 
-function verifyResponse(formId, contentId, modalId, idModalMessage = null, func = ()=> {}) {
+function verifyResponse(formId, contentId, modalId, idModalMessage = null, func = ()=> {}, reset=true) {
     event.preventDefault(); // Evita o comportamento padrão do clique no botão
   
     $('.invalid-feedback').empty();
@@ -111,7 +111,7 @@ function verifyResponse(formId, contentId, modalId, idModalMessage = null, func 
   
     var form = $('#' + formId)[0]; // Obtém o formulário
     var formData = new FormData(form); // Obtém os dados do formulário serializados
-  
+    console.log(formData);
     $.ajax({
       url: form.getAttribute('action'),
       type: 'POST',
@@ -128,15 +128,29 @@ function verifyResponse(formId, contentId, modalId, idModalMessage = null, func 
         if (response.success) {
           $("#" + modalId).modal('hide');
           let form = document.getElementById(formId);
-          form.reset();
+          if(reset == true){
+            form.reset();
+          }
           $('.invalid-feedback').empty();
           $('.form-control').removeClass('is-invalid');
           $('#error-message-modal').hide();
           $('#error-message-modal-edit').hide();
-          func();
+
+          if((func.length < 0)){
+            func();
+          }
+
           setTimeout(function () {
             atualizeContent(contentId);
           }, 500);
+
+
+          if(func.length > 0 && func.length < 3){
+            func(response.success, response.message);
+          }
+          else if(func.length > 2){
+            func(response.success, response.message, response);
+          }
         } else {
   
           if (response.alert_in_modal) {
@@ -151,7 +165,7 @@ function verifyResponse(formId, contentId, modalId, idModalMessage = null, func 
               response.error +
               "</div>" +
               "<div class='text-center align-self-center'>" +
-              "<button class='modal-close-alert btn-sm btn-danger text-light rounded-circle'><i class='fa fa-times-circle'></i></button>" +
+              "<button class='modal-close-alert btn-sm btn-danger text-light rounded-circle'><i class='fa fa-times-circle text-light'></i></button>" +
               "</div>" +
               "</div>";
   
@@ -237,18 +251,98 @@ function replaceContent(success, content, contentReplace = content) {
   pageElement.replaceWith(requestElement);
 }
 
-function triggerAction(element, content, func = ()=>{}){
+function triggerAction(element, content, csrfToken, func = ()=>{}){
   $(document).on('click', '.' + element, function(event) {
     event.preventDefault();
   
     var url = $(this).attr('href');
 
-    $.get(url, function(data) {
+    $.post(url,{csrfmiddlewaretoken: csrfToken}, function(data) {
+      func(data.success, data.message);
       setTimeout(function () {
-        func();
         atualizeContent(content);
       }, 100);
      
     });
   });
 }
+
+function closeMessage(){
+  var button = document.querySelector("#close-message");
+  button.addEventListener('click', (e)=>{
+      var message = document.querySelector("#message");
+      message.classList.remove('d-flex');
+      message.classList.add('d-none');
+    });
+}
+
+var func = (typeMsg, message)=>{
+  var divMessage = document.querySelector("#message");
+  var type = document.querySelector("#type-message");
+  var content = document.querySelector("#content-message");
+  var button = document.querySelector("#close-message");
+
+  if (typeMsg == true){
+    type.textContent = 'Sucesso';
+    divMessage.classList.remove('alert-danger');
+    divMessage.classList.add('alert-success');
+    button.classList.remove('btn-danger');
+    button.classList.add('btn-success');
+  }
+  else{
+    type.textContent = 'Erro';
+    divMessage.classList.remove('alert-success');
+    divMessage.classList.add('alert-danger');
+    button.classList.remove('btn-success');
+    button.classList.add('btn-danger');
+  }
+
+  content.textContent = message;
+
+  divMessage.classList.remove('d-none');
+  divMessage.classList.add('d-flex');
+}
+
+function generateColors(length) {
+  const startColor = "#d2b300";
+  const endColor = "#0f1015";
+
+  // Converte as cores para o formato RGBA
+  const startRGB = hexToRgb(startColor);
+  const endRGB = hexToRgb(endColor);
+
+  // Gera uma sequência linear de cores no espaço RGB
+  const colorsRGB = interpolateColors(startRGB, endRGB, length);
+
+  // Converte as cores de volta para o formato hexadecimal
+  const colorsHex = colorsRGB.map(rgbToHex);
+
+  return colorsHex;
+}
+
+function hexToRgb(hex) {
+  const bigint = parseInt(hex.slice(1), 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return [r, g, b];
+}
+
+function rgbToHex(rgb) {
+  return `#${((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1)}`;
+}
+
+function interpolateColors(start, end, steps) {
+  const stepFactor = 1 / (steps - 1);
+  const interpolatedColors = [];
+
+  for (let i = 0; i < steps; i++) {
+    const r = Math.round(start[0] + i * stepFactor * (end[0] - start[0]));
+    const g = Math.round(start[1] + i * stepFactor * (end[1] - start[1]));
+    const b = Math.round(start[2] + i * stepFactor * (end[2] - start[2]));
+    interpolatedColors.push([r, g, b]);
+  }
+
+  return interpolatedColors;
+}
+

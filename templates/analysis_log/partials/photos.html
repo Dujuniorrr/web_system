@@ -6,7 +6,11 @@
       </div>
       <div class="p-2" style="max-height: 115vh; overflow-y: auto;">
         {% for analysis_log in analysis_logs %}
-        <img src="{{ analysis_log.captured_img_path.url }}" alt="" width="100%" class="mb-2">
+        <div class="edit_hover_class mb-3">
+          <img width="100%" class="miniaturaImg" src="{{ analysis_log.processed_img_path.url }}">
+          <a  download="{{analysis_log.date}}.jpg" href="{{ analysis_log.processed_img_path.url }}" title="Download" href='#'> <i class="fa-regular fa-circle-down display-1" style="color: #dfb83a;"></i> </a>
+      </div>
+
         {% endfor %}
       </div>
     </div>

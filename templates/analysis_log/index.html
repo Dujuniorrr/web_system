@@ -13,7 +13,8 @@ Monitoramento de Pragas
     <div class="align-text-center d-flex align-items-center mb-2">
        <div class="d-flex">
         <div class="shadow bg-dark rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height: 40px;">
-          <i class="fa-solid fa-camera-retro text-light" style="color: #c6a436  !important"></i>
+
+          <i class="fa-solid fa-crosshairs text-light" style="color: #c6a436  !important"></i>
         </div>
        </div>
        <div class="ms-3">
@@ -27,11 +28,12 @@ Monitoramento de Pragas
      </div>
     
     <div class="col-12 col-md-auto d-flex justify-content-end mb-2 ">
-      <button id="select-trap" class="btn btn-dark d-flex btn-click"  role="button" data-bs-toggle="dropdown" aria-expanded="false" >Armadilha 1 <i class="mdi mdi-menu-down d-block m-0"></i> </button>
+      <button id="select-trap" class="btn btn-dark d-flex btn-click"  role="button" data-bs-toggle="dropdown" aria-expanded="false" >Armadilha {{ pest_trap.name }} <i class="mdi mdi-menu-down d-block m-0"></i> </button>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-      <li><a class="dropdown-item" href="#">Armadilha 1</a></li>
-      <li><a class="dropdown-item" href="#">Armadilha 2</a></li>
-      <li><a class="dropdown-item" href="#">Armadilha 3</a></li>
+      {% for trap in pest_traps %}
+          <li><a class="dropdown-item" href="/monitoramentos/{{trap.id}}">Armadilha {{trap.name}}</a></li>
+
+      {% endfor %}
     </ul>
     </div>
   </div>
@@ -59,7 +61,14 @@ Monitoramento de Pragas
     $(".openModalView").click(function () {
       var capturedImgSrc = $(this).attr("data-bs-captured-img");
       var processedImgSrc = $(this).attr("data-bs-processed-img");
+      var date = $(this).attr("data-bs-date");
   
+      $("#download-img-captured").attr("download", date + '-capturada.jpg');
+      $("#download-img-captured").attr("href", capturedImgSrc);
+
+      $("#download-img-processed").attr("download", date + '-processada.jpg');
+      $("#download-img-processed").attr("href",processedImgSrc);
+
       $("#modalCapturedImg").attr("src", capturedImgSrc);
       $("#modalProcessedImg").attr("src", processedImgSrc);
       

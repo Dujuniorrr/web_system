@@ -8,6 +8,7 @@ class PestTrap(models.Model):
     is_active = models.BooleanField(verbose_name="Ativo", default=True)
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Criado em")
     
+    
     class Meta:
         verbose_name = "Armadilha"
         

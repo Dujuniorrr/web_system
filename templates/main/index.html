@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="m-3">
+  <div class="mb-4">
+    <h2>
+      Relátorio Semanal
+    </h2>
+  </div>
+  <div class="row">
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card  shadow-sm">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <div class="d-flex align-items-center align-self-start">
+                <h3 class="mb-0">{{ total_pests }} pragas </h3>
+                <!-- <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p> -->
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="icon box-yellow">
+                <i class="fa-solid fa-bug"></i>
+              </div>
+            </div>
+          </div>
+          <h6 class="text-muted font-weight-normal">Nessa semana</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card  shadow-sm">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <div class="d-flex align-items-center align-self-start">
+                <h3 class="mb-0"> {{temperature}} °C </h3>
+                <!-- <p class="text-success ml-2 mb-0 font-weight-medium">+11%</p> -->
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="icon box-dark">
+                <i class="fa-solid fa-temperature-three-quarters m-1"></i>
+              </div>
+            </div>
+          </div>
+          <h6 class="text-muted font-weight-normal">Temperatura média</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card  shadow-sm">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <div class="d-flex align-items-center align-self-start">
+                <h3 class="mb-0"> {{ pressure }} Pa</h3>
+                <!-- <p class="text-danger ml-2 mb-0 font-weight-medium">-2.4%</p> -->
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="icon box-yellow">
+                <i class="fa-solid fa-gauge-simple-high m-1"></i>
+              </div>
+            </div>
+          </div>
+          <h6 class="text-muted font-weight-normal">Pressão atmósferica média</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card  shadow-sm">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <div class="d-flex align-items-center align-self-start">
+                <h3 class="mb-0">{{ records }} Registros </h3>
+                <!-- <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p> -->
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="icon box-dark ">
+                <i class="fa-solid fa-crosshairs"></i>
+              </div>
+            </div>
+          </div>
+          <h6 class="text-muted font-weight-normal">Nessa semana</h6>
+        </div>
+      </div>
+    </div>
+
+      <div class="row">
+        <div class="col-12 col-md-4  mb-3">
+          <div  class="card p-3">
+            <h4 class="text-center mb-2">Número de Pragas por Armadilha</h4>
+            <div>
+              <canvas id="trap" class="mx-1 h-100" ></canvas>
+            </div>
+          </div>
+         
+        </div>
+        <div class="col-12 col-md-8 mb-3">
+          <div class="card w-100 h-100">
+            <canvas id="pestsByDay" class="mx-1 h-100" ></canvas>
+           </div>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+
+ 
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static 'js/script.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+  groupTrap();
+  pestsByDay();
+
+  async function pestsByDay(){
+    //const res = await fetch('/armadilhas/agrupar');
+    const res = await fetch('/monitoramentos/semana/dias');
+    var json = await res.json();
+
+    var ctx = document.getElementById('pestsByDay').getContext('2d');
+
+    // Dados do gráfico
+    var data = {
+      labels: json.days,
+      datasets: [{
+        label: 'Número de Pragas por dia',
+        data: json.total_pests,  // Substitua isso pelos seus dados
+        backgroundColor: '#c6a436d3 ',  // Cor de preenchimento das colunas
+        borderColor:  '#816813',  // Cor da borda das colunas
+        borderWidth: 2  // Largura da borda
+      }]
+    };
+
+    // Configurações do gráfico
+    var options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      },
+      title: {
+        display: true,
+        text: 'Número de Pragas nos último 7 dias'
+      }
+    };
+
+    // Crie o gráfico de colunas
+    var myBarChart = new Chart(ctx, {
+      type: 'bar',
+      data: data,
+      options: options
+    });
+  }
+  
+  async function groupTrap() {
+    const res = await fetch('/armadilhas/agrupar');
+    var json = await res.json();
+
+    // Obtenha o contexto do canvas
+    var ctx = document.getElementById('trap').getContext('2d');
+
+    console.log(generateColors(json.total_pests.length))
+    // Crie os dados para o gráfico
+    var data = {
+      datasets: [{
+        data: json.total_pests, // Exemplo de dados
+        backgroundColor: generateColors(json.total_pests.length),
+        borderColor: 'white', // Cor da borda
+        borderWidth: 2 // Largura da borda
+      }],
+      labels: json.names // Rótulos para cada fatia
+    };
+
+    // Configure as opções do gráfico
+    var options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutoutPercentage: 50, // Porcentagem de corte (0 para um círculo completo, 50 para uma rosca)
+      legend: {
+        position: 'bottom'
+      }
+    };
+
+    // Crie o gráfico de rosca
+    var myDoughnutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: data,
+      options: options
+    });
+  }
+</script>
+
+
+{% endblock %}

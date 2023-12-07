@@ -11,6 +11,7 @@
       {% endblock %}
     </title>
 
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700|Montserrat:300" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <!-- plugins:css -->
@@ -48,13 +49,14 @@
             <span class="nav-link">Navegação</span>
           </li>
           <li id="dashboard" class="nav-item menu-items">
-            <a class="nav-link" href="/painel">
+            <a class="nav-link" href="/">
               <span class="menu-icon">
-                <i class="mdi mdi-speedometer"></i>
+                <i class="fa-solid fa-gauge-simple-high"></i>
               </span>
               <span class="menu-title">Painel</span>
             </a>
           </li>
+          {% if request.user.is_superuser %}
           <li id="accounts" class="nav-item menu-items">
             <a class="nav-link" href="/usuarios">
               <span class="menu-icon">
@@ -63,14 +65,32 @@
               <span class="menu-title">Usuários</span>
             </a>
           </li>
-          <li id="analysis_logs" class="nav-item menu-items">
-            <a class="nav-link" href="">
+          {% endif %}
+          <li id="pests_trap" class="nav-item menu-items">
+            <a class="nav-link" href="/armadilhas">
               <span class="menu-icon">
-                <i class="mdi mdi-table-large"></i>
+                <i class="fa-solid fa-bug"></i>
               </span>
-              <span class="menu-title">Registros</span>
+              <span class="menu-title">Armadilhas</span>
             </a>
           </li>
+          <li id="analysis_logs" class="nav-item menu-items">
+            <a class="nav-link" href="/monitoramentos">
+              <span class="menu-icon">
+                <i class="fa-solid fa-crosshairs"></i>
+              </span>
+              <span class="menu-title">Monitoramento</span>
+            </a>
+          </li>
+          <li id="dashboard" class="nav-item menu-items">
+            <a class="nav-link" href="/painel">
+              <span class="menu-icon">
+                <i class="fa-solid fa-chart-simple"></i>
+              </span>
+              <span class="menu-title">Gráficos</span>
+            </a>
+          </li>
+          
           <!-- <li class="nav-item menu-items">
             <a class="nav-link" href="">
               <span class="menu-icon">
@@ -97,26 +117,28 @@
                 <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
                   <div class="navbar-profile">
                     {% if user.is_superuser %}
-                    <img class="img-xs rounded-circle" src="/media/profile_imgs/icon-profile.png"  alt="">
+                    <img class="img-xs rounded-circle profile-img" src="/media/profile_imgs/icon-profile.png"  alt=""  >
                     {% else %}
-                    <img class="img-xs rounded-circle" src="{{user.clientprofile.img_path.url}}" alt="">
+                    <img class="img-xs rounded-circle profile-img" src="{{user.clientprofile.img_path.url}}" alt="">
                     
                     {% endif %}
-                    <p class="mb-0 d-none d-sm-block navbar-profile-name">Durval Junior</p>
+                    <p id="username-space" class="mb-0 d-none d-sm-block navbar-profile-name">
+                      {{user.first_name}} {{user.last_name}}
+                    </p>
                     <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                   </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
-                  <h6 class="p-3 mb-0 text-light">Profile</h6>
+                  <h6 class="p-3 mb-0 text-light">Perfil</h6>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item preview-item">
+                  <a href="/usuarios/perfil" class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
                         <i class="mdi mdi-settings text-success"></i>
                       </div>
                     </div>
                     <div class="preview-item-content">
-                      <p class="preview-subject mb-1">Settings</p>
+                      <p class="preview-subject mb-1">Configurações</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
@@ -141,13 +163,17 @@
         </nav>
         <!-- partial -->
         <div class="main-panel">
-          <div class="content-wrapper p-0">
+          <div   {% if traps %}
+            id="traps"
+           {% endif %} class="content-wrapper p-0"
+        
+          >
             {% block content %}
             {% endblock %}
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
-          <footer class="footer">
+          <footer class="footer" >
             <div class="d-sm-flex justify-content-center text-center">
               <span class="text-dark d-block text-center text-sm-left d-sm-inline-block">Copyright © AI PRAGA 2023</span>
 
@@ -189,7 +215,7 @@
         "painel" : "dashboard",
         "usuarios" : "accounts",
         "armadilhas" : "pests_trap",
-        "monitoramento" : "analysis_logs",
+        "monitoramentos" : "analysis_logs",
     };
 
     var url = window.location.href;
@@ -200,10 +226,7 @@
         if(key == argument){
             $('.nav-item-list').removeClass("active");
             document.getElementById(navIcons[key]).classList.add("active");
-          
-            if(key == 'mesa'){
-                changeImage(true);
-            }
+            break;
         }
     };
     </script>
