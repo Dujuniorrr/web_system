@@ -27,6 +27,7 @@ days_dict = {
     7: 'Sábado',
 }
 
+@login_required
 def get_data_by_day(request):
     today = datetime.today()
     last_week = today - timedelta(days=7)
@@ -65,6 +66,7 @@ def get_data_by_day(request):
        'avg_pressures': avg_pressures
     })
 
+@login_required
 def get_number_pests_by_day(request):
     last_week = datetime.today() - timedelta(days=7)
     
@@ -88,7 +90,6 @@ def get_number_pests_by_day(request):
        'total_pests': total_pests
     })
     
-
 @csrf_exempt
 def receive_analysis_log_data(request):
    try:
@@ -111,7 +112,6 @@ def receive_analysis_log_data(request):
    except:
         return JsonResponse({'success': False}, status=405)
        
-
 @login_required
 def index(request, id=None):
     if id and not request.user.is_superuser:

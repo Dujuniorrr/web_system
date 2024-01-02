@@ -116,7 +116,7 @@ def get_grouped_traps(request):
     total_pests  = []
 
     for trap in grouped_traps:
-        names.append('Armadilha ' + trap['pest_trap__name'])
+        names.append(trap['pest_trap__name'])
         total_pests.append(trap['total_pests'])
     
     return JsonResponse({

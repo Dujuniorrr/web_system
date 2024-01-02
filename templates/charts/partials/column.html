@@ -1,0 +1,201 @@
+<div class="col-12 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="row d-flex justify-content-between mb-3">
+                    <div class="row align-items-center col-12 col-md-auto">
+                        <h3 class="col-12 col-md-auto">Gráfico de Colunas</h3>
+                    </div>
+
+                    <button id="toggleInfoBtn" class="btn btn-yellow col-auto ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#columnChartInfo" aria-expanded="false" aria-controls="columnChartInfo">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i> Informações
+                    </button>
+
+                    <div class="text-dark col-12">
+                        <div class="collapse" id="columnChartInfo">
+                            <p>
+                                Apresentando <span id="variableInfoColumn">Informações sobre Número de Pragas</span>
+                            </p>
+                            <p>
+                                Selecione a variável desejada para visualizar dados específicos fornecidos pelo
+                                gráfico de colunas particionadas por semanas do mês. Este gráfico oferece informações sobre as
+                                tendências semanais e padrões relacionados à variável escolhida, permitindo
+                                identificar variações e tendências ao longo do mês. Por exemplo:
+                                <ul>
+                                    <li><strong>Temperatura:</strong> Analise as variações semanais de temperatura para identificar padrões sazonais e eventos climáticos extraordinários.</li>
+                                    <li><strong>Pressão Atmosférica:</strong> Observe as mudanças semanais na pressão atmosférica para identificar tendências climáticas, eventos extraordinários e correlações com outros fatores ambientais.</li>
+                                    <li><strong>Número de Pragas:</strong> Avalie as tendências semanais no número de pragas, identificando picos sazonais, padrões diários e eventos extraordinários.</li>
+                                </ul>
+                                Essas análises proporcionam idéias para tomar decisões informadas em práticas agrícolas, como a implementação de estratégias de manejo integrado de pragas, definição de níveis de alerta e compreensão das relações entre diferentes variáveis ambientais. Explore e compare os dados das variáveis para otimizar o cuidado com sua plantação.
+                            </p>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="mt-3">
+                    <form id="columnChartForm" class="row text-dark mb-3">
+                        <div class="mb-3 col-12 col-md-6 col-lg-3">
+                            <label for="monthSelectColumn" class="form-label">Mês</label>
+                            <select name="monthColumn" class="form-select form-control dark bg-light" id="monthSelectColumn">
+                                <option value="1">Janeiro</option>
+                                <option value="2">Fevereiro</option>
+                                <option value="3">Março</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Maio</option>
+                                <option value="6">Junho</option>
+                                <option value="7">Julho</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-12 col-md-6 col-lg-3">
+                            <label for="yearSelectColumn" class="form-label">Ano</label>
+                            <select name="yearColumn" class="form-select form-control dark bg-light" id="yearSelectColumn">
+                                {% for year in years %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3 col-12 col-md-6 col-lg-3">
+                            <label for="variableSelectColumn" class="form-label">Variável:</label>
+                            <select id="variableSelectColumn" class="form-select col-auto form-control dark bg-light">
+                                <option value="temperature">Temperatura</option>
+                                <option value="pressure">Pressão Atmosférica</option>
+                                <option value="pests">Número de Pragas</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-12 col-md-6 col-lg-3">
+                            <label for="pestTrapColumn" class="form-label">Armadilha:</label>
+                            <select id="pestTrapColumn" name="pest_trap_column"
+                                class="form-select col-auto form-control dark bg-light">
+                                <option value="">Todas</option>
+                                {% for pest_trap in pest_traps %}
+                                <option value="{{pest_trap.id}}">{{pest_trap.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <div class="card w-100 h-100">
+                        <canvas id="columnChart" class="mx-1" style="width: 300px; height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var myColumnChart;
+
+    $(document).ready(function () {
+        function renderColumnChart(data, style) {
+            if (myColumnChart) {
+                myColumnChart.destroy();
+            }
+
+            var ctxColumn = document.getElementById('columnChart').getContext('2d');
+            myColumnChart = new Chart(ctxColumn, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: style.name,
+                        data: data.data,
+                        backgroundColor: style.background,
+                        borderColor: style.border,
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom'
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateColumnChart(variable) {
+            var formDataColumn = $('#columnChartForm').serialize();
+            var urlColumn;
+            var stylesColumn = {
+                'border': '#000',
+                'background': '#302F2F',
+                'name': 'Número de Pragas'
+            }
+            switch (variable) {
+                case 'temperature':
+                    urlColumn = '/graficos/coluna/media-de-temperatura';
+                    stylesColumn = {
+                        'border': '#816813',
+                        'background': '#c6a436d3',
+                        'name': 'Média de Temperatura'
+                    }
+                    break;
+                case 'pressure':
+                    urlColumn = '/graficos/coluna/media-de-pressao';
+                    stylesColumn = {
+                        'border': '#D8CB0E',
+                        'background': '#F2E96F',
+                        'name': 'Média de Pressão de Atmósferica'
+                    }
+                    break;
+                case 'pests':
+                    urlColumn = '/graficos/coluna/numero-de-pragas';
+                    break;
+                default:
+                    break;
+            }
+
+            $.ajax({
+                url: urlColumn,
+                method: 'GET',
+                data: formDataColumn,
+                dataType: 'json',
+                success: function (responseColumn) {
+                    renderColumnChart(responseColumn, stylesColumn);
+                },
+                error: function (errorColumn) {
+                    console.error('Erro na solicitação AJAX:', errorColumn);
+                }
+            });
+        }
+
+        $('#columnChartForm').on('change', function () {
+            var selectedVariableColumn = $('#variableSelectColumn').val();
+            updateColumnChart(selectedVariableColumn);
+
+            switch (selectedVariableColumn) {
+                case 'temperature':
+                    $('#variableInfoColumn').html('Informações sobre Temperatura.');
+                    break;
+                case 'pressure':
+                    $('#variableInfoColumn').html('Informações sobre Pressão Atmosférica.');
+                    break;
+                case 'pests':
+                    $('#variableInfoColumn').html('Informações sobre Número de Pragas.');
+                    break;
+                default:
+                    $('#variableInfoColumn').html('Selecione uma variável para exibir as informações correspondentes.');
+                    break;
+            }
+        });
+
+        updateColumnChart($('#variableSelectColumn').val());
+    });
+
+</script>

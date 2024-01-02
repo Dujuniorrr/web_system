@@ -8,24 +8,15 @@ from django.db.models import Count
 from django.db.models.functions import ExtractWeekDay
 from pest_traps.models import PestTrap
 
-@login_required
-def get_number_pests_by_day(request):
-    last_week = datetime.today() - timedelta(days=7)
-    
-    pests_by_day = AnalysisLog.objects.filter(
-        pest_trap__in=PestTrap.objects.filter(user=request.user),
-        date__gte=last_week,
-        date__lte=datetime.today()
-    ).annotate(day_of_week=ExtractWeekDay('date')) 
+def handler404(request, exception, **kwargs):
+    response = render(request, "error_pages/404.html")
+    response.status_code = 404
+    return response
 
-    aggregated_results = pests_by_day.values('day_of_week').annotate(total_pests=Sum('pests_number'))
-    
-    print(aggregated_results)
-
-    return JsonResponse({
-       
-    })
-     
+def handler500(request, **kwargs):
+    response = render(request, "error_pages/500.html")
+    response.status_code = 500
+    return response
 
 @login_required
 def home(request):

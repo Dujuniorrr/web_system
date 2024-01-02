@@ -1,0 +1,8 @@
+# requirements.txt
+
+python_version == 3.9.*
+
+Django == 3.2.*
+
+# Adiciona as bibliotecas para envio de e-mail
+smtplib == 3.2.*

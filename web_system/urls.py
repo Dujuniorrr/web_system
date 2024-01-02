@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from . import settings
+from main.views import handler404, handler500
 
 from django.contrib.auth.views import (
     PasswordResetView, 
@@ -31,6 +32,10 @@ urlpatterns = [
     path('password-reset-complete/',PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),name='password_reset_complete'),
     
 ]
+
+
+handler404 = handler404
+handler500 = handler500
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL,
