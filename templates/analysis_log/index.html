@@ -28,15 +28,84 @@ Monitoramento de Pragas
      </div>
     
     <div class="col-12 col-md-auto d-flex justify-content-end mb-2 ">
-      <button id="select-trap" class="btn btn-dark d-flex btn-click"  role="button" data-bs-toggle="dropdown" aria-expanded="false" >Armadilha {{ pest_trap.name }} <i class="mdi mdi-menu-down d-block m-0"></i> </button>
-    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+      <button id="select-trap" class="btn btn-dark d-flex btn-click"  role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+        {{ pest_trap.name }} 
+        {% if request.user.is_superuser %}
+        ( {{pest_trap.user.first_name}} {{pest_trap.user.last_name}} )
+      {% endif %}
+       <i class="mdi mdi-menu-down d-block m-0"></i> </button>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="overflow-y: auto; max-height: 80vh;">
       {% for trap in pest_traps %}
-          <li><a class="dropdown-item" href="/monitoramentos/{{trap.id}}">Armadilha {{trap.name}}</a></li>
+          <li><a class="dropdown-item" href="/monitoramentos/{{trap.id}}">
+            {{trap.name}}
+          
+            {% if request.user.is_superuser %}
+              ( {{trap.user.first_name}} {{trap.user.last_name}} )
+            {% endif %}
+        </a></li>
 
       {% endfor %}
     </ul>
     </div>
   </div>
+
+  <div class="card mb-2 py-3 mx-3">
+    <form id="filter-records" method="GET" action="" class="col-12">
+      <div class="col-12 d-flex justify-content-between align-items-center">
+        <div class="p-0 border border-1 border-secondary shadow-sm bg-light d-flex rounded-pill mx-2 col-12 col-md-8">
+          <div class="d-flex align-items-center px-3 py-2"><i class="fa-solid fa-magnifying-glass text-dark"></i></div>
+          <input id="search" type="text" class="form-control-plaintext" name="searchField" placeholder="Pesquisar...">
+          
+          <div title="Filtrar" role="button" class="d-flex align-items-center px-3 py-2 navbar-toggler" type="button" data-toggle="collapse" data-target="#filter" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            
+            <img src="{% static 'img/filter.svg' %}" alt="Filtrar" title="Filtrar" width="20px">
+          </div>
+         </div>
+         
+      
+      </div>
+
+       <div id="filter" class="mt-3 collapse navbar-collapse text-dark py-2 px-3" >
+          <div class="row">
+            <div class="mb-3 col-12 col-md-6 col-lg-3">
+              <label for="exampleInputEmail1" class="form-label">Data inicial</label>
+              <input name="initial_date" type="date" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3 col-12 col-md-6 col-lg-3">
+              <label for="exampleInputEmail1" class="form-label">Data Final</label>
+              <input name="final_date" type="date" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3 col-12 col-md-6 col-lg-3">
+              <label for="exampleInputEmail1" class="form-label">Min. de Pragas</label>
+              <input name="min_pest" type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3 col-12 col-md-6 col-lg-3">
+              <label for="exampleInputEmail1" class="form-label">Max. de Pragas</label>
+              <input name="max_pest" type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+
+            <div class="mb-3 col-12 col-md-6 col-lg-3">
+              <label for="exampleInputEmail1" class="form-label">Temperatura Min.</label>
+              <input name="min_temperature" type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3 col-12 col-md-6 col-lg-3">
+              <label for="exampleInputEmail1" class="form-label">Temperatura Max.</label>
+              <input name="max_temperature" type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+          <div class="mb-3 col-12 col-md-6 col-lg-3">
+            <label for="exampleInputEmail1" class="form-label">Pressão Atmósferica Min.</label>
+            <input name="min_pressure"  type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+          </div>
+          <div class="mb-3 col-12 col-md-6 col-lg-3">
+            <label for="exampleInputEmail1" class="form-label">Pressão Atmósferica Max.</label>
+            <input name="max_pressure" type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+          </div>
+          </div>
+      </div>
+
+    </form>
+        
+</div>
   
   <div id="container-content" class="row mx-2">
 
@@ -44,6 +113,12 @@ Monitoramento de Pragas
 
       {% include 'analysis_log/partials/photos.html' %} 
 
+      {{pagination}}
+      <script>
+  closePhotos();
+       
+        $(document).ready(managerRecords);
+      </script>
   </div>
 
 {% include 'analysis_log/partials/modal.html' %} 
@@ -52,12 +127,31 @@ Monitoramento de Pragas
 
 {% block js %}
 <script src="{% static 'js/script.js' %}"></script>
+
 <script>
 
-  
-  closePhotos();
+   var paginationHandler = setupPagination('.page-link', '#container-content');
+ paginationHandler();
 
-  $(document).ready(function () {
+ setInterval( atualizeContent('container-content'), 1000);
+
+
+  var searchField = document.getElementById('search');
+
+    searchField.addEventListener('input', function (event) {
+      var inputValue = event.target.value;
+
+      var sanitizedValue = inputValue.replace(/[^0-9.]/g, '');
+
+      searchField.value = sanitizedValue;
+    });
+
+ document.getElementById('filter-records').action = window.location.href.split('?')[0];
+
+  setupSearch('#container-content', 'filter-records')
+  
+
+  function managerRecords() {
     $(".openModalView").click(function () {
       var capturedImgSrc = $(this).attr("data-bs-captured-img");
       var processedImgSrc = $(this).attr("data-bs-processed-img");
@@ -65,6 +159,11 @@ Monitoramento de Pragas
   
       $("#download-img-captured").attr("download", date + '-capturada.jpg');
       $("#download-img-captured").attr("href", capturedImgSrc);
+
+      $("#date").text( $(this).attr("data-bs-date"));
+      $("#pests").text( $(this).attr("data-bs-pests_number") + " Pragas");
+      $("#temperature").text( $(this).attr("data-bs-temperature") + "°C Temperatura");
+      $("#pressure").text( $(this).attr("data-bs-pressure") + " Pa");
 
       $("#download-img-processed").attr("download", date + '-processada.jpg');
       $("#download-img-processed").attr("href",processedImgSrc);
@@ -83,11 +182,14 @@ Monitoramento de Pragas
         $("#viewModal").css("display", "none");
       }
     });
-  });
 
-  $("#closeView").click(function(){
+    $("#closeView").click(function(){
       $("#modalCapturedImg").attr("src", '');
       $("#modalProcessedImg").attr("src", '');
   });
+  }
+</script>
+<script>
+  $(document).ready(managerRecords);
 </script>
 {% endblock %}

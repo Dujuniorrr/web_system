@@ -1,67 +1,267 @@
 {% extends 'base.html' %}
-
+{% load static %}
+{% block title %}
+Listagem de Armadilhas
+{% endblock %}
 {% block content %}
 
 
-<div class="container col-10 mb-5 mt-5">
-      <div id="" class="row col-12">
+<div class="mb-3 col-12 card-header py-3 px-4 d-md-inline-flex align-items-center justify-content-between d-sm-block ">
+ 
+  <div class="align-text-center d-flex align-items-center mb-2">
+     <div class="d-flex">
+      <div class="shadow bg-dark rounded-circle d-flex justify-content-center align-items-center" style="width:40px; height: 40px;">
+
+        <i class="fa-solid fa-bug text-light" style="color: #c6a436  !important" ></i>
+      </div>
+     </div>
+     <div class="ms-3">
+      <h4 class="card-title text-dark m-0"> 
+        Listagem de Armadilhas
+    </h4>
+    <p class="text-black m-0 text-justify">
+      Aqui você consegue visualizar suas armadilhas e seus respectivos status!
+    </p>
+     </div>
+   </div>
+
+</div>
+
+
+  {% if request.user.is_superuser %}
+  <div class="container-col-12 mx-3">
+
+<form id="filter-traps" action="/armadilhas" method="GET" class="d-flex align-items-center mx-2" >
+  
+  <div class="p-2 me-0 pb-0 rounded-start rounded-pill" style="background-color: #0f1015; border-top-right-radius: 0px !important; border-bottom-right-radius: 0px !important;">
+    <button onclick="event.preventDefault()" id="add-user" class="btn btn-light d-flex btn-click rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal">
+       <i class="fa fa-plus" aria-hidden="true"></i> Adicionar 
+      </button>
+  </div>
+  
+  <div id="filterSelect" style="background-color: #0f1015;"  id="top-options" class="mb-0 ms-0 col-3 form-group d-block p-0">
+  <select style="display: none;" name="username" id="id_user_filter" class="form-control">
+    <option value="*">Todos os usuários</option>
+    {% for user in users %}
+    <option value="{{user.user.id}}" >
+      
+  
+      {{user.user.first_name}} {{user.user.last_name}} ({{ user.cpf }})
+    
+    </option>
+    {% endfor %}
+  </select>
+  </div>
+  <div  id="top-options" class="mb-0 ms-0 ps-1 form-group d-block rounded-pill p-0 d-flex align-items-center" style="background-color: #0f1015;">
+    
+    <select name="status" id="status_filter" class="text-center form-control" style=" border-radius: 0px !important; ">
+      <option value="0" selected>Todas Armadilhas</option>
+      <option value="1" > Armadilhas Ativadas </option>
+      <option value="2" > Armadilhas Desativadas </option>
+    </select>
+    <button onclick="event.preventDefault();" id="btn-filter" class="p-2" style="background-color: #0f1015; border-top-right-radius: 25px !important; border-bottom-right-radius:25px !important; border:0px; ">
+      <div class="m-1"></div>
+    </button>
+  </div>
+</form>
+</div>
+
+{% endif %}
+
+
+<div class="container col-12 mb-5 mt-4">
+ 
+  <div id="message" class="mt-4 alert alert-danger alert-white rounded justify-content-between d-none">
+    <div class="d-flex align-items-center"><span class="icon me-1"><i
+                class="fa-solid fa-circle-exclamation"></i></span><strong id="type-message" class="me-2">Erro!
+        </strong><span id="content-message">O tipo de usuário informado é inválido!</span></div>
+    <div class="text-center align-self-center"><button id="close-message"
+            class="btn-sm btn-danger text-light rounded-circle "><i class="fa fa-times-circle text-light"
+                aria-hidden="true"></i></button></div>
+  </div>
+
+      <div id="main" class="row col-12">
+      
         {% for trap in traps %}
         <div class="col-xl-4 col-md-6 col-12 text-dark mb-4">
 
-          <a href="/monitoramentos/{{trap.id}}" class="card shadow text-decoration-none" >
+          <span  class="card shadow" >
 
-            <div class="p-3">
+            <a href="/monitoramentos/{{trap.id}}" class="px-3 pt-3 text-decoration-none pb-0">
+        
               <div class="d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">
-                  Armadilha {{trap.name}}
+                  {{trap.name}}
                 </h3>
               
               </div>
               <span class="text-dark created-at">Implantada em: {{trap.created_at.date }}</span>
-            </div>
-            <div class="card-body">
+              
+              {% if request.user.is_superuser %}
+              <div style="font-size: smaller; color:rgba(53, 53, 53, 0.822)">
+                {{trap.token}}
+                </div>
+              <div class="mb-3 mt-3 d-flex text-dark align-items-center">
+               <img class="img-xs me-2 rounded-circle  bg-dark  border border-dark"
+               src="{{trap.user.clientprofile.img_path.url}}" alt="">
+               {{trap.user.first_name}} {{trap.user.last_name}}
+             </div>
+            
+              {% endif %}
+ 
+            </a>
+            <div class="card-body pt-0">
 
               <div class="d-flex">
                 <div class="col-6 p-0 d-flex align-items-end">
-                 {% if trap.is_active %}
-                 <span class="btn btn-success rounded-pill" aria-disabled="true">
-                  <i class="fa-regular fa-circle-check"></i> Ativa
-                </span>
-                 {% else %}
-                 <span class="btn btn-danger rounded-pill" aria-disabled="true">
-                  <i class="fa-regular fa-circle-xmark"></i> Desativada
-                </span>
-                 {% endif %}
+               
+                  {% if request.user.is_superuser %}
+                  {% if trap.is_active %}
+                    <a title="Desativar" href="/armadilhas/desativar/{{trap.id}}" class="control-btn btn btn-danger rounded-pill">
+                      <i class="fa-regular fa-circle-xmark"></i> Desativar
+                    </a>
+                  {% else %}
+                    <a title="Ativar" href="/armadilhas/ativar/{{trap.id}}"  class="control-btn btn btn-success rounded-pill">
+                      <i class="fa-regular fa-circle-check"></i> Ativar
+                    </a>
+                  {% endif %}
+                {% else %}
+                  {% if trap.is_active %}
+                    <span class="btn btn-success rounded-pill" aria-disabled="true" style="cursor: default;">
+                      <i class="fa-regular fa-circle-check"></i> Ativa
+                    </span>
+                  {% else %}
+                    <span class="btn btn-danger rounded-pill" aria-disabled="true" style="cursor: default;">
+                      <i class="fa-regular fa-circle-xmark"></i> Desativada
+                    </span>
+                  {% endif %}
+                {% endif %}
+
+                 
                 </div>
                 <div class="col-6 text-end">
                   <i class="fa-solid fa-bug display-1" style="color: rgba(0, 0, 0, 0.822);"></i>
                 </div>
               </div>
             </div>
-          </a>
+          </span>
         </div>
-        {% endfor %}
+        {% empty %}
 
+        <div class="my-3 alert alert-danger text-center py-4">
+          <i class="fa fa-warning mb-3 fs-4" aria-hidden="true"></i>
+          <div>
+            Nenhuma armadilha foi encontrada!
+          </div>
+        </div>
+        
+        {% endfor %}
+    {{pagination}}
+
+    </div>
   </div>
 </div>
 
 
+{% include 'pest_traps/partials/add_modal.html' %} 
+
+
 {% endblock %}
+{% block js %}
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <script>
-  window.addEventListener('load', function () {
-    var pai = document.querySelector('#trap-container');
-    var filho = document.querySelector('#traps');
+  
+  var idName;
+  var idToken;
 
-    // Obtém as dimensões do filho
-    var filhoWidth = filho.offsetWidth;
-    var filhoHeight = filho.offsetHeight;
+  var paginationHandler = setupPagination('.page-link', '#main');
+  paginationHandler();
 
-    // Atualiza as dimensões do pai
-    pai.style.width = filhoWidth + 'px';
-    pai.style.height = filhoHeight + 'px';
+  setupSearch('#main', 'filter-traps')
+  
+  closeMessage();
+
+  triggerAction('control-btn', 'main', document.getElementsByName('csrfmiddlewaretoken')[0].value, func);
+
+  $(document).on('click', '#btn-add-form', function (event) {
+    var form = $('#form-add');
+
+    form.append( $('<input>').attr({
+      type: 'hidden',
+      name: 'token',
+      value: idToken
+    }));
+
+    form.append( $('<input>').attr({
+      type: 'hidden',
+      name: 'name',
+      value: idName
+    }));
+
+    verifyResponse("form-add", "main", "addModal",'error-message', ()=>{
+      changeVal('d-block', 'd-none');
+    })
+  });
+
+
+  $(document).ready(function() {
+
+    $('#id_user').select2({
+      dropdownParent: $("#form-add"),
+      placeholder: 'Pesquisar...',
+      language: {
+        noResults: function () {
+          return 'Nenhum resultado encontrado'; // Altere a mensagem aqui
+        }
+      }
+    });
+
+    var userFilter = $('#id_user_filter').select2({
+      dropdownParent: $("#filterSelect"),
+      placeholder: 'Filtrar por usuário...',
+      language: {
+        noResults: function () {
+          return 'Nenhum resultado encontrado'; // Altere a mensagem aqui
+        }
+      }
+    });
+
+    
+    $('#id_user').change(function() {
+      var select = document.getElementById("id_user");
+      var value = select.value;
+
+      const url = `/armadilhas/gerar-token?id=${value}`;
+
+      fetch(url)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error(`Erro na solicitação: ${response.status}`);
+          }
+          return response.json();
+      })
+      .then(data => {
+        var name = document.getElementById("id_name");
+        name.value = data.name;
+        var token = document.getElementById("id_token");
+        token.value = data.token;
+        idName = data.name;
+        idToken =  data.token;
+      })
+      .catch(error => {
+        
+      });
+  });
+
+  });
+
+
+  resetForm('.btn-close-add', 'formAdd', 'form-add', ()=>{
+    changeVal('d-block', 'd-none');
   });
 </script>
-{% block js %}
-
 
 {% endblock %}

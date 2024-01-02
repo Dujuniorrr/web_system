@@ -2,6 +2,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 from django.shortcuts import redirect
+from django.core.paginator import Paginator
+from django.template import Template, Context
 
 def superuser_required(view_func):
     """
@@ -58,3 +60,53 @@ def send_code_by_email(instance, code):
         server.starttls()
         server.login(smtp_username, smtp_password)
         server.sendmail(sender_email, receiver_email, message.as_string())
+
+
+def do_pagination(number_page, itens_key, itens, number_of_itens):    
+
+    paginator = Paginator(itens, number_of_itens)
+    
+    return {   
+        itens_key : paginator.page(number_page).object_list,
+        'pagination' : Template(process_template_string()).render(
+            Context({
+                'page': paginator.page(number_page),
+                'lower_limit': max(paginator.page(number_page).number - 5, 1),
+                'upper_limit': min(paginator.page(number_page).number + 5, paginator.num_pages)
+            }))
+    }
+    
+def process_template_string():
+    return '''
+    {% if page.paginator.num_pages > 1 %}
+        <div class="row mt-4">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                 
+                    {% if page.has_previous %}
+                        <li class="page-item m-1">
+                            <a class="page-link text-dark border border-dark pe-4 ps-4 rounded-5 fw-bold"
+                                href="?page={{ page.previous_page_number }}" tabindex="-1"><i class="fa-solid fa-caret-left"></i></a>
+                        </li>
+                    {% endif %}
+                    {% for num in page.paginator.page_range %}
+                        {% if num == page.number %}
+                            <li class="page-item m-1"><a class="page-link active border border-dark rounded-5 fw-bold"
+                                href="?page={{ page.number }}">{{ num }}</a></li>
+                        {% elif num > lower_limit and num < upper_limit %}
+                            <li class="page-item m-1"><a
+                                class="page-link   text-dark border border-dark rounded-5 fw-bold" href="?page={{ num }}">{{num}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page.has_next %}
+                        <li class="page-item m-1">
+                            <a class="page-link  text-dark border border-dark  pe-4 ps-4 rounded-5 fw-bold"
+                                href="?page={{ page.next_page_number }}"><i class="fa-solid fa-caret-right"></i></a>
+                        </li>
+                    {% endif %}
+            
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+    '''

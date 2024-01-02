@@ -1,119 +1,86 @@
+{% extends 'registration/base.html' %}
+
 {% load static %}
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+{% block title %} 
+Login
+{% endblock%}
 
-    <script src="https://kit.fontawesome.com/6a5dd2730c.js"></script>
-    <link href="{% static 'login/assets/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'login/assets/css/font-awesome.min.css' %}" rel="stylesheet">
-    <link href="{% static 'login/assets/css/style.css' %}" rel="stylesheet">
-    <link rel="shortcut icon" href="{% static 'img/icon.png' %}" />
+{% block content %}
+<div class="form-group">
 
-    <title>Login</title>
-  </head>
-  <body>
-    <section class="form-02-main">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-md-12">
-            <div class="_lk_de">
-              <form id="login-form" action="" method="post" class="form-03-main">
-                {% csrf_token %}
-                <div class="logo">
-                  <img src="{% static 'img/logo_min.png' %}">
-                </div>
-                <input type="hidden" name="next" id="next" value="">
-                <div id="login-message">
-                  <span> <i class="fa fa-close m-1" aria-hidden="true"></i> </span>
-                  Menage de Erro
-                </div>
-                
-            
-                <div class="form-group">
+  <label for="username" class="label">Email:</label>
+<input id="username" type="text" name="username" class="form-control _ge_de_ol" type="text" placeholder="Digite seu email" required="" aria-required="true">
+</div>
 
-                    <label for="username" class="label">Email:</label>
-                  <input id="username" type="text" name="username" class="form-control _ge_de_ol" type="text" placeholder="Digite seu email" required="" aria-required="true">
-                </div>
+<div class="form-group">
+  <label for="password" class="label">Senha:</label>
+<input id="password" type="password" name="password" class="form-control _ge_de_ol" type="text" placeholder="Digite sua senha" required="" aria-required="true">
+</div>
 
-                <div class="form-group">
-                    <label for="password" class="label">Senha:</label>
-                  <input id="password" type="password" name="password" class="form-control _ge_de_ol" type="text" placeholder="Digite sua senha" required="" aria-required="true">
-                </div>
+<div class="checkbox form-group d-flex justify-content-end">
+<!-- <div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="">
+  <label class="form-check-label" for="">
+    Remember me
+  </label>
+</div> -->
+<a href="/password-reset/">Esqueceu a senha?</a>
+</div>
 
-                <div class="checkbox form-group d-flex justify-content-end">
-                  <!-- <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="">
-                    <label class="form-check-label" for="">
-                      Remember me
-                    </label>
-                  </div> -->
-                  <a href="#">Esqueceu a senha?</a>
-                </div>
+<div class="form-group">
+<button class="_btn_04">
+  <span class="login-text"> Login</a>
+</button>
+</div>
+{% endblock %}
 
-                <div class="form-group">
-                  <button class="_btn_04">
-                    <span class="login-text"> Login</a>
-                  </button>
-                </div>
-
-            </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <script>
-      document.getElementById("login-form").addEventListener("submit", function (event) {
-          event.preventDefault(); 
-          const username = document.getElementById("username").value;
-          const password = document.getElementById("password").value;
-      
-        
-          fetch("{% url 'login' %}", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/x-www-form-urlencoded",
-                  "X-CSRFToken": "{{ csrf_token }}",
-              },
-              body: `username=${username}&password=${password}`,
+{% block js %}
+<script>
+  document.getElementById("login-form").addEventListener("submit", function (event) {
+      event.preventDefault(); 
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+  
+    
+      fetch("{% url 'login' %}", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: `username=${username}&password=${password}`,
+      })
+          .then((response) => {
+            console.log(response);
+              if (response.redirected === true) {
+                 if (document.getElementById('next').value){
+                    window.location.href =  document.getElementById('next').value
+                 }
+                 else{
+                    window.location.href = "{% url 'home' %}";  
+                 } 
+              } else {
+                  var message = document.getElementById("login-message");
+                  var replacedMessage = document.createTextNode("Credenciais inválidas. Tente novamente.");
+                  message.replaceChild(replacedMessage, message.lastChild);
+                  message.style.display = "block";
+              }
           })
-              .then((response) => {
-                console.log(response);
-                  if (response.redirected === true) {
-                     if (document.getElementById('next').value){
-                        window.location.href =  document.getElementById('next').value
-                     }
-                     else{
-                        window.location.href = "{% url 'home' %}";  
-                     } 
-                  } else {
-                      var message = document.getElementById("login-message");
-                      var replacedMessage = document.createTextNode("Credenciais inválidas. Tente novamente.");
-                      message.replaceChild(replacedMessage, message.lastChild);
-                      message.style.display = "block";
-                  }
-              })
-              .catch((error) => {
-                  console.error("Erro ao fazer login:", error);
-              });
-      });
+          .catch((error) => {
+              console.error("Erro ao fazer login:", error);
+          });
+  });
 
 
-      document.addEventListener('DOMContentLoaded', function() {
-        var nextField = document.getElementById('next');
-        var urlParams = new URLSearchParams(window.location.search);
-        var nextValue = urlParams.get('next');
-        
-        if (nextValue) {
-            nextField.value = nextValue;
-        }
-    });
-      </script>
-      
-  </body>
-</html>
+  document.addEventListener('DOMContentLoaded', function() {
+    var nextField = document.getElementById('next');
+    var urlParams = new URLSearchParams(window.location.search);
+    var nextValue = urlParams.get('next');
+    
+    if (nextValue) {
+        nextField.value = nextValue;
+    }
+});
+  </script>
+{% endblock %}

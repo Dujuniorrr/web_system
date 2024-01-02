@@ -1,0 +1,128 @@
+<div class="col-12 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="row d-flex justify-content-between mb-3">
+                    <div class="row align-items-center col-12 col-md-auto">
+                        <h3 class="col-12 col-md-auto">Gráfico de Pressão Atmosférica</h3>
+                        <h5 class="col-auto mb-0">(Gráfico em Linhas)</h5>
+                    </div>
+            
+                    <button id="togglePressureInfoBtn" class="btn btn-yellow col-auto ms-2 ms-md-0" type="button" data-bs-toggle="collapse" data-bs-target="#pressureChartInfo" aria-expanded="false" aria-controls="pressureChartInfo">
+                         <i class="fa fa-info-circle" aria-hidden="true"></i> Informações
+                    </button>
+                </div>
+            
+                <div class="text-dark col-12">
+            
+                    <div class="collapse" id="pressureChartInfo">
+                        <p>
+                            O gráfico de pressão atmosférica pode fornecer diversas informações úteis dependendo do contexto da sua plantação e das características específicas dos dados exibidos. Alguns insights que você pode extrair deste gráfico incluem:
+                            <ol>
+                                <li><strong>Tendências ao longo do tempo:</strong> Analisar as variações na pressão atmosférica ao longo do tempo pode ajudar a identificar padrões sazonais e tendências climáticas.</li>
+                                <li><strong>Padrões diários/semanais:</strong> Identificar padrões específicos, como variações na pressão atmosférica em diferentes momentos do dia ou da semana.</li>
+                                <li><strong>Eventos extraordinários:</strong> Mudanças bruscas ou picos inesperados na pressão atmosférica podem indicar eventos climáticos extraordinários.</li>
+                                <li><strong>Relacionamentos com outros fatores:</strong> Ao combinar o gráfico de pressão atmosférica com outros dados, como o número de pragas e a temperatura, você pode identificar possíveis correlações.</li>
+                                <li><strong>Níveis de alerta:</strong> Definir níveis de alerta com base nas variações na pressão atmosférica pode ajudar a destacar situações que exigem atenção imediata para proteger suas plantas.</li>
+                            </ol>
+                            Lembre-se de que a interpretação específica dependerá do contexto da sua plantação e de como você aplica as práticas agrícolas. Além disso, é crucial considerar outros fatores ambientais que podem influenciar o crescimento das plantas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <form id="linePressure" class="row text-dark mb-3">
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="initialDatePressure" class="form-label">Data inicial</label>
+                        <input name="initial_date" type="date" class="form-control dark bg-light"
+                            id="initialDatePressure" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="finalDatePressure" class="form-label">Data Final</label>
+                        <input name="final_date" type="date" class="form-control dark bg-light"
+                            id="finalDatePressure" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="minTemperature" class="form-label">Mín. de Pressão </label>
+                        <input name="min_pressure" type="number" class="form-control dark bg-light" id="minTemperature" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="maxTemperature" class="form-label">Máx. de Pressão</label>
+                        <input name="max_pressure" type="number" class="form-control dark bg-light" id="maxTemperature" aria-describedby="emailHelp">
+                    </div>
+                </form>
+            </div>
+            <div>
+                <div class="card w-100 h-100">
+                    <canvas id="pressureLineChart" class="mx-1" style="width: 300px; height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var myPressureChart;
+
+$(document).ready(function() {
+    function renderPressureChart(data) {
+        if (myPressureChart) {
+            myPressureChart.destroy();
+        }
+
+        var ctx = document.getElementById('pressureLineChart').getContext('2d');
+        myPressureChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Média de Pressão Atmosférica por Dia',
+                    data: data.data,  
+                    backgroundColor: '#F2E96F ',   
+                    borderColor: '#D8CB0E',   
+                    borderWidth: 2  
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    },
+                    y: {
+                        type: 'linear',
+                        position: 'left'
+                    }
+                }
+            }
+        });
+    }
+
+    function updatePressureChart() {
+        var formData = $('#linePressure').serialize();  
+
+        $.ajax({
+            url: '/graficos/linha/media-de-pressao',
+            method: 'GET',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                renderPressureChart(response);  
+            },
+            error: function(error) {
+                console.error('Erro na solicitação AJAX:', error);
+            }
+        });
+    }
+
+    $('#linePressure').on('change', 'input', function() {
+        updatePressureChart();  
+    });
+
+    updatePressureChart();
+});
+
+</script>

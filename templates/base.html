@@ -82,8 +82,8 @@
               <span class="menu-title">Monitoramento</span>
             </a>
           </li>
-          <li id="dashboard" class="nav-item menu-items">
-            <a class="nav-link" href="/painel">
+          <li id="charts" class="nav-item menu-items">
+            <a class="nav-link" href="/graficos">
               <span class="menu-icon">
                 <i class="fa-solid fa-chart-simple"></i>
               </span>
@@ -163,9 +163,7 @@
         </nav>
         <!-- partial -->
         <div class="main-panel">
-          <div   {% if traps %}
-            id="traps"
-           {% endif %} class="content-wrapper p-0"
+          <div class="content-wrapper p-0"
         
           >
             {% block content %}
@@ -216,6 +214,7 @@
         "usuarios" : "accounts",
         "armadilhas" : "pests_trap",
         "monitoramentos" : "analysis_logs",
+        "graficos" : "charts",
     };
 
     var url = window.location.href;

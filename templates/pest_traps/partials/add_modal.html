@@ -1,0 +1,53 @@
+<div class="modal fade"  data-bs-backdrop="static" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title d-flex justify-content-between w-100">
+             <!-- <i class="fa fa-plus-circle me-1" aria-hidden="true"></i>  -->
+             <div>Adicionar Armadilha</div>
+             <button type="button" class="btn-close btn-close-white btn-close-add" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+        </div>
+        <div class="modal-body">
+          <form id="form-add" method="post" action="/armadilhas/cadastrar">
+            {% csrf_token %}
+            <div class="row">
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3 form-group d-block">
+                <label for="id_user" class="form-label d-block">Usuário</label>
+              <select style="display: none;" name="username" id="id_user" class="form-control" >
+                <option value=""></option>
+                {% for user in users %}
+                <option value="{{user.user.id}}" >
+                  
+
+                  {{user.user.first_name}} {{user.user.last_name}} ({{ user.cpf }})
+                
+                </option>
+                {% endfor %}
+              </select>
+              </div>
+  
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  form-group">
+                <label for="id_name" class="form-label"> Nome </label>
+                <input type="text" name="" id="id_name" class="form-control" disabled value="">
+              </div>
+
+
+              <div class="mb-3 col-12 col-md-6 col-lg-4 col-xl-3  form-group">
+                <label for="id_token" class="form-label"> Token </label>
+                <input type="text" name="" id="id_token" class="form-control" disabled value="">
+              </div>
+
+              <div id="error-message">
+
+              </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeAdd" type="button" class="btn btn-dark btn-close-add" style="color:  #c6a436" data-bs-dismiss="modal"><i class="fa-solid fa-circle-xmark"></i>Fechar</button>
+        <button id="btn-add-form" class="btn text-dark" style="background:  #c6a436" > <i class="fa-solid fa-circle-right"></i> Adicionar </button>
+      </div>
+    </div>
+    
+  </div>

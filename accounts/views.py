@@ -4,15 +4,14 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect
 from .forms import ImageProfileForm, UserCreateForm, ClientProfileForm, PasswordChangeFormCustom
 from django.contrib.auth.models import User
-from web_system.utils import superuser_required
+from web_system.utils import do_pagination, superuser_required
 from .models import ClientProfile
 from django.contrib.auth import update_session_auth_hash
+from django.db.models import Q
 
 @superuser_required
-@login_required
 def register_user(request):
     forms = {'admin': UserCreateForm, 'client': ClientProfileForm}  
     if request.method == 'POST':  
@@ -32,7 +31,6 @@ def register_user(request):
     return redirect('/')
 
 @superuser_required
-@login_required
 def desactive_user(request, id):
     if request.method == 'POST':
         try:
@@ -47,7 +45,6 @@ def desactive_user(request, id):
     return redirect('/')
 
 @superuser_required
-@login_required
 def active_user(request, id):
     if request.method == 'POST':
         try:
@@ -61,14 +58,57 @@ def active_user(request, id):
             return JsonResponse({'success': False, 'message': 'Esse usuário não existe!'})
     return redirect('/')
 
-@login_required
 @superuser_required
 def list_users(request):
-    return render(request, 'accounts/index.html', {
+    users = User.objects.all()
+     
+    search = request.GET.get('searchField', None)
+    if search:
+        users = users.filter(
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search) |
+            Q(email__icontains=search) |
+            Q(clientprofile__cpf__icontains=search) |
+            Q(clientprofile__address__icontains=search) |
+            Q(clientprofile__phone__icontains=search) 
+        )
+    
+    params_mapping = {
+        'first_name': 'first_name__icontains',
+        'last_name': 'last_name__icontains',
+        'email': 'email__icontains',
+        'cpf': 'clientprofile__cpf__icontains',
+        'address': 'clientprofile__address__icontains',
+        'phone': 'clientprofile__phone__icontains',
+        'date': 'clientprofile__date',
+    }
+
+    filters = {params_mapping[key]: request.GET[key] for key in params_mapping if request.GET.get(key)}
+
+    try:
+        if filters:
+            users = users.filter(Q(**filters))
+            
+    except Exception as e:
+        print('error: ' + str(e))
+        
+    status_mapping = {
+        '1': True,
+        '2': False,
+    }
+
+    status = status_mapping.get(request.GET.get('status'))
+    if status is not None:
+        users = users.filter(is_active=status)
+        
+    context = {
         'form': UserCreateForm(), 
-        'client_form': ClientProfileForm(),
-        'users' : User.objects.all()
-    })
+        'client_form': ClientProfileForm(), 
+    }
+    context.update(do_pagination(
+    request.GET.get('page') if request.GET.get('page') else 1,
+    'users',  users, 20))
+    return render(request, 'accounts/index.html', context)
 
 @login_required
 def show_profile(request):
@@ -132,7 +172,7 @@ def update_image(request):
                                  'img_path': user.img_path.url})  
         else:
             return JsonResponse({'success': False, 
-                            'message': 'Apenas arquivos em formatos de mensagem são aceitos!'})  
+                            'message': 'Apenas arquivos em formatos de imagens são aceitos!'})  
     return redirect('/')
 
 class CustomLoginView(LoginView):

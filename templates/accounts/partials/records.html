@@ -3,11 +3,11 @@
 <div id="records" class="col-12">
 
   <div class="card mb-2 py-3">
-    <form action="mx-3 text-dark " class="col-12 ">
+    <form id="filter-users" method="GET" action="/usuarios" class="col-12 ">
       <div class="col-12 d-flex justify-content-between align-items-center">
         <div class="p-0 border border-1 border-secondary shadow-sm bg-light d-flex rounded-pill mx-2 col-8">
           <div class="d-flex align-items-center px-3 py-2"><i class="fa-solid fa-magnifying-glass text-dark"></i></div>
-          <input type="text" class="form-control-plaintext .da" placeholder="Pesquisar...">
+          <input name="searchField" type="text" class="form-control-plaintext" placeholder="Pesquisar...">
           
           <div title="Filtrar" role="button" class="d-flex align-items-center px-3 py-2 navbar-toggler" type="button" data-toggle="collapse" data-target="#filter" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             
@@ -15,45 +15,48 @@
           </div>
          </div>
          
-         <button class="btn btn-dark p-2">
-          Pesquisar
-        </button>
+         
       </div>
 
        <div id="filter" class="mt-3 collapse navbar-collapse text-dark py-2 px-3" >
           <div class="row">
             <div class="mb-3 col-12 col-md-6 col-lg-3">
-              <label for="exampleInputEmail1" class="form-label">Data inicial</label>
-              <input type="date" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <label for="exampleInputEmail1" class="form-label">Nome</label>
+              <input type="text" name="first_name" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
             </div>
             <div class="mb-3 col-12 col-md-6 col-lg-3">
-              <label for="exampleInputEmail1" class="form-label">Data Final</label>
-              <input type="date" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <label for="exampleInputEmail1" class="form-label">Sobrenome</label>
+              <input type="text" name="last_name" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
             </div>
             <div class="mb-3 col-12 col-md-6 col-lg-3">
-              <label for="exampleInputEmail1" class="form-label">Min. de Pragas</label>
-              <input type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <label for="exampleInputEmail1" class="form-label">Email</label>
+              <input  type="text" name="email"  class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
             </div>
             <div class="mb-3 col-12 col-md-6 col-lg-3">
-              <label for="exampleInputEmail1" class="form-label">Max. de Pragas</label>
-              <input type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <label for="exampleInputEmail1" class="form-label">CPF</label>
+              <input id="filter_cpf" maxlength="11"  type="text" name="cpf"  class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
             </div>
 
             <div class="mb-3 col-12 col-md-6 col-lg-3">
-              <label for="exampleInputEmail1" class="form-label">Temperatura Min.</label>
-              <input type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <label for="exampleInputEmail1" class="form-label">Endereço</label>
+              <input type="text" name="address"  class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
             </div>
             <div class="mb-3 col-12 col-md-6 col-lg-3">
-              <label for="exampleInputEmail1" class="form-label">Temperatura Max.</label>
-              <input type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+              <label for="exampleInputEmail1" class="form-label">Telefone</label>
+              <input id="filter_phone" maxlength="19" type="text" name="phone"  class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
             </div>
           <div class="mb-3 col-12 col-md-6 col-lg-3">
-            <label for="exampleInputEmail1" class="form-label">Pressão Atmósferica Min.</label>
-            <input type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <label for="exampleInputEmail1" class="form-label">Data de Aniversário</label>
+            <input type="date" name="birthday" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
           </div>
           <div class="mb-3 col-12 col-md-6 col-lg-3">
-            <label for="exampleInputEmail1" class="form-label">Pressão Atmósferica Max.</label>
-            <input type="number" class="form-control dark bg-light" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <label for="exampleInputEmail1" class="form-label">Status</label>
+           
+            <select name="status" id="" class="form-control  dark bg-light">
+                <option value="0">Todos</option>
+                <option value="1">Ativos</option>
+                <option value="2">Desativados</option>
+            </select>
           </div>
           </div>
       </div>
@@ -137,15 +140,41 @@
 
                 {% endif %}
                 <button class="openModalView btn btn-yellow " type="button" data-bs-toggle="modal"
-                  data-bs-captured-img="{{ analysis_log.captured_img_path.url }}"
-                  data-bs-processed-img="{{ analysis_log.processed_img_path.url }}" data-bs-target="#viewModal" {% if user.is_superuser %} disabled {% endif %}>
+                data-bs-first_name="{{ user.first_name }}"
+                data-bs-last_name="{{ user.last_name }}"
+                data-bs-email="{{ user.email }}"
+                data-bs-cpf="{{ user.clientprofile.cpf }}"
+                data-bs-birthday="{{ user.clientprofile.birthday }}"
+                data-bs-phone="{{ user.clientprofile.phone }}"
+                data-bs-address="{{ user.clientprofile.address }}"
+                data-bs-url="{{ user.clientprofile.img_path.url }}"
+                data-bs-id="{{ user.id }}"
+                 data-bs-target="#viewModal" {% if user.is_superuser %} disabled {% endif %}>
                   <i class="fa-solid fa-eye m-0" aria-hidden="true"></i> Visualizar
                 </button>
               </td>
             </tr>
+
+            {% empty %}
+
+              <div class="my-3 alert alert-danger text-center py-4">
+                <i class="fa fa-warning mb-3 fs-4" aria-hidden="true"></i>
+                <div>
+                  Nenhum usuário foi encontrado!
+                </div>
+              </div>
+
             {% endfor %}
           </tbody>
         </table>
+        <script src="{% static 'js/script.js' %}"></script>
+
+        <script>
+         
+          $(document).ready(managerRecords);
+          var paginationHandler = setupPagination('.page-link', '#container-content');
+          paginationHandler();
+        </script>
       </div>
     </div>
   </div>

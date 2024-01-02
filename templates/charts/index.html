@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Gráficos
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-3 col-12 card-header py-3 px-4 d-md-inline-flex align-items-center justify-content-between d-sm-block ">
+
+    <div class="align-text-center d-flex align-items-center mb-2">
+        <div class="d-flex">
+            <div class="shadow bg-dark rounded-circle d-flex justify-content-center align-items-center"
+                style="width:40px; height: 40px;">
+                <i class="fa-solid fa-chart-simple" style="color: #c6a436  !important"></i>
+            </div>
+        </div>
+        <div class="ms-3">
+            <h4 class="card-title text-dark m-0">
+                Gráficos
+            </h4>
+            <p class="text-black m-0 text-justify">
+                Aqui você pode visualizar e consultar os dados de monitoramento de suas armadilhas por meio de gráficos!
+            </p>
+        </div>
+    </div>
+</div>
+
+<div>
+
+    <div class="row mt-3 mx-2">
+       {% include "charts/partials/chart_line_number_of_pests.html" %}
+
+       {% include "charts/partials/chart_line_avg_temperature.html" %}
+
+       {% include "charts/partials/chart_line_avg_pressure.html" %}
+
+    </div>  
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+
+</script>
+{% endblock %}

@@ -11,5 +11,4 @@ urlpatterns = [
     path('editar', views.edit_profile, name="edit_profile"),
     path('mudar-senha', views.change_password, name="change_password"),
     path('alterar-imagem', views.update_image, name="change_password")
-    
 ]

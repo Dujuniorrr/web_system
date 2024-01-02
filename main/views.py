@@ -8,7 +8,7 @@ from django.db.models import Count
 from django.db.models.functions import ExtractWeekDay
 from pest_traps.models import PestTrap
 
-
+@login_required
 def get_number_pests_by_day(request):
     last_week = datetime.today() - timedelta(days=7)
     

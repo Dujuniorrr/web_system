@@ -1,3 +1,40 @@
+
+var typingTimer; // Variável para armazenar o temporizador de digitação
+var doneTypingInterval = 500; // Intervalo de atraso após a digitação (em milissegundos)
+
+function setupSearch(contentId, formName) {
+  $(document).on('change', '#' + formName, function (event) {
+    clearTimeout(typingTimer); // Limpar o temporizador existente
+
+    // var input = $(this);
+    var url =  $('#' + formName).attr('action'); // Obtém a URL de ação do formulário
+    var formData = $('#' + formName).serialize(); // Obtém os dados do formulário em formato de string
+
+    // Iniciar um novo temporizador para aguardar o término da digitação
+    typingTimer = setTimeout(function () {
+      // Construir a URL com os dados do formulário
+      var urlWithData = url + '?' + formData;
+
+      // Alterar a URL do site
+      history.pushState(null, '', urlWithData);
+
+      // Enviar solicitação AJAX
+      $.ajax({
+        url: urlWithData,
+        type: 'GET',
+        success: function (success) {
+          // Manipular a resposta da solicitação AJAX
+          replaceContent(success, contentId);
+        },
+        error: function (xhr, status, error) {
+          // Manipular erros da solicitação AJAX
+          alert(error);
+        }
+      });
+    }, doneTypingInterval);
+  });
+}
+
 function closePhotos(){
     var btn = document.querySelector("#close-photos");
     btn.addEventListener('click', (e)=>{
@@ -346,3 +383,40 @@ function interpolateColors(start, end, steps) {
   return interpolatedColors;
 }
 
+
+function setupPagination(linkClass, contentId) {
+  return function () {
+    $(document).on('click', linkClass, function (event) {
+
+      event.preventDefault(); // Evita o comportamento padrão de redirecionamento do <a>
+
+      var query = $(this).attr('href'); // Obtém o URL do atributo href do <a>
+      var url = window.location.href;
+      if (url.includes('page=')) {
+        var urlWithNoQuery = url.substring(0, url.lastIndexOf("page"))
+        urlWithNoQuery += query.substring(1, query.lenght)
+        var fullUrl = urlWithNoQuery;
+      }
+      else if (url.includes("?")) {
+        var fullUrl = window.location.href + query.replace('?', '&');;
+      } else {
+        var fullUrl = window.location.href + query;
+      }
+      // Enviar solicitação AJAX
+      $.ajax({
+        url: fullUrl,
+        type: 'GET',
+        success: function (success) {
+          // Manipular a resposta da solicitação AJAX
+          replaceContent(success, contentId);
+          // Alterar a URL do site
+          window.history.pushState({ path: fullUrl }, '', fullUrl);
+        },
+        error: function (xhr, status, error) {
+          // Manipular erros da solicitação AJAX
+          alert(error);
+        }
+      });
+    });
+  };
+}

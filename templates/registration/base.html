@@ -1,0 +1,49 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <script src="https://kit.fontawesome.com/6a5dd2730c.js"></script>
+    <link href="{% static 'login/assets/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'login/assets/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'login/assets/css/style.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'img/icon.png' %}" />
+ 
+    <title>{% block title %} {% endblock%}</title>
+  </head>
+  <body>
+    <section class="form-02-main">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-12">
+            <div class="_lk_de">
+              <form id="login-form" action="{% block action %}{% endblock %}" method="post" class="form-03-main">
+                {% csrf_token %}
+                <div class="logo">
+                  <img src="{% static 'img/logo_min.png' %}">
+                </div>
+                <input type="hidden" name="next" id="next" value="">
+                <div id="login-message">
+                  <span> <i class="fa fa-close m-1" aria-hidden="true"></i> </span>
+                  Mensagem de Erro
+                </div>
+                
+                    {% block content%}
+                    {% endblock %}
+
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% block js%}
+    {% endblock %}
+      
+  </body>
+</html>

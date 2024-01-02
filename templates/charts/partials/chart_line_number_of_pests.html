@@ -1,0 +1,135 @@
+<div class="col-12 mb-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center ">
+                <div class="col-12 row justify-content-between mb-3">
+                    <div class="row align-items-center col-12 col-md-auto">
+                        <h3 class="col-12 col-md-auto">Número de Pragas</h3>
+                        <h5 class="ms-md-3 col-auto">(Gráfico em Linhas)</h5>
+                    </div>
+
+                    <button id="toggleInfoBtn" class="btn btn-yellow ms-3 ms-md-3 col-auto" type="button" data-bs-toggle="collapse" data-bs-target="#chartInfo" aria-expanded="false" aria-controls="chartInfo">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i> Informações
+                    </button>
+                </div>
+                
+                <div class="text-dark col-12">
+                    
+                    <div class="collapse" id="chartInfo">
+                        <p>
+                            O gráfico de pragas pode fornecer diversas informações úteis dependendo do contexto de sua plantação e das características específicas dos dados exibidos. Alguns insights que você pode extrair deste gráfico incluem:
+                            <ol>
+                                <li><strong>Tendências ao longo do tempo:</strong> Analisar o número de pragas ao longo do tempo pode ajudar a identificar padrões sazonais, variações sazonais e tendências de longo prazo. Por exemplo, você pode observar picos sazonais durante determinadas épocas do ano.</li>
+                                <li><strong>Padrões diários/semanais:</strong> Você pode identificar padrões específicos, como aumentos ou quedas regulares em determinados dias da semana.</li>
+                                <li><strong>Eventos extraordinários:</strong> Mudanças bruscas ou picos inesperados no número de pragas podem indicar eventos extraordinários, como surtos ou condições ambientais extremas.</li>
+                                <li><strong>Eficácia do controle de pragas:</strong> Se você estiver implementando medidas de controle de pragas, o gráfico pode ajudar a avaliar a eficácia dessas ações ao longo do tempo.</li>
+                                <li><strong>Relacionamentos com outros fatores:</strong> Ao combinar o gráfico de pragas com outros dados, como temperatura e pressão atmósferica, você pode identificar possíveis correlações ou causas para variações no número de pragas.</li>
+                                <li><strong>Níveis de alerta:</strong> Definir níveis de alerta com base nos dados do gráfico pode ajudar a destacar situações que exigem atenção imediata.</li>
+                            </ol>
+                            Lembre-se de que a interpretação específica dependerá do contexto da sua plantação e da forma que aplica o Manejo Integrado de Pragas. Além disso, é crucial considerar outros fatores ambientais que podem influenciar a presença de pragas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <form  id="linePests" class="row text-dark mb-3">
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="exampleInputEmail1" class="form-label">Data inicial</label>
+                        <input name="initial_date" type="date" class="form-control dark bg-light"
+                            id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="exampleInputEmail1" class="form-label">Data Final</label>
+                        <input name="final_date" type="date" class="form-control dark bg-light"
+                            id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="exampleInputEmail1" class="form-label">Min. de Pragas</label>
+                        <input name="min_pest" type="number" class="form-control dark bg-light"
+                            id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="exampleInputEmail1" class="form-label">Max. de Pragas</label>
+                        <input name="max_pest" type="number" class="form-control dark bg-light"
+                            id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+
+                </form>
+        </div>
+        <div>
+            <div class="card w-100 h-100">
+                <canvas id="pestsLineChart" class="mx-1" style="width: 300px; height: 300px;"></canvas>
+              </div>
+        </div>
+        
+    </div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+var myLineChart;
+
+$(document).ready(function() {
+    function renderChart(data) {
+
+        if (myLineChart) {
+            myLineChart.destroy();
+        }
+
+        var ctx = document.getElementById('pestsLineChart').getContext('2d');
+        myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                  label: 'Número de Pragas por dia',
+                  data: data.data,  
+                  backgroundColor: '#302F2F ',   
+                  borderColor: '#000',   
+                  borderWidth: 2  
+                }]
+              },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom'
+                    },
+                    y: {
+                        type: 'linear',
+                        position: 'left'
+                    }
+                }
+            }
+        });
+    }
+
+    function updateChart() {
+        var formData = $('#linePests').serialize(); 
+
+        $.ajax({
+            url: '/graficos/linha/numero-de-pragas',
+            method: 'GET',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                renderChart(response);  
+            },
+            error: function(error) {
+                console.error('Erro na solicitação AJAX:', error);
+            }
+        });
+    }
+
+    $('#linePests').on('change', 'input', function() {
+        updateChart();  
+    });
+
+    updateChart();
+});
+</script>

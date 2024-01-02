@@ -36,19 +36,28 @@ Gerenciamento de Usuários
   <div id="container-content" class="row mx-2">
     
       {% include 'accounts/partials/records.html' %} 
+
+      {{pagination}}
   </div>
+  {% include 'accounts/partials/modal_user.html' %} 
 
   {% include 'accounts/partials/modal_add.html' %} 
 
+ 
 {% endblock %}
 
 {% block js %}
 <script src="{% static 'js/script.js' %}"></script>
+
 <script>
-   
+
   formartCPF('id_cpf');
   formartPhone('id_phone');
+  formartCPF('filter_cpf');
+  formartPhone('filter_phone');
   closeMessage();
+
+  setupSearch('#main', 'filter-users');
 
   triggerAction('control-btn', 'main', document.getElementsByName('csrfmiddlewaretoken')[0].value, func);
   
@@ -64,5 +73,40 @@ Gerenciamento de Usuários
  
   setForrmType();
   
+
+  function managerRecords() {
+    $(".openModalView").click(function () {
+
+      $("#first_name").text( $(this).attr("data-bs-first_name"));
+      $("#last_name").text( $(this).attr("data-bs-last_name"));
+      $("#email").text( $(this).attr("data-bs-email"));
+      $("#cpf").text( $(this).attr("data-bs-cpf"));
+      $("#birthday").text( $(this).attr("data-bs-birthday"));
+      $("#phone").text( $(this).attr("data-bs-phone"));
+      $("#address").text( $(this).attr("data-bs-address"));
+      $("#user-img").attr("src", $(this).attr("data-bs-url"));
+      $("#user-img").attr("src", $(this).attr("data-bs-url"));
+      $("#id-user").attr("href", '/armadilhas?username=' + $(this).attr("data-bs-id"));
+    });
+  
+    $(".close").click(function () {
+      $("#viewModal").css("display", "none");
+    });
+  
+    $(window).click(function (e) {
+      if (e.target.id === "viewModal") {
+        $("#viewModal").css("display", "none");
+      }
+    });
+
+    $("#closeView").click(function(){
+      $("#modalCapturedImg").attr("src", '');
+      $("#modalProcessedImg").attr("src", '');
+  });
+  }
+
+</script>
+<script>
+  $(document).ready(managerRecords);
 </script>
 {% endblock %}

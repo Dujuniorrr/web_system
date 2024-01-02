@@ -38,10 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'analysis_logs',
     'main',
     'pest_traps',
-    'accounts'
+    'accounts',
+    'charts'
 ]
 
 MIDDLEWARE = [
@@ -83,6 +85,7 @@ DATABASES = {
     'default': {  
         'ENGINE': 'django.db.backends.mysql',  
         'NAME': 'ai_praga',  
+        # 'NAME': 'ai_praga2',  
         'USER': 'root',  
         'PASSWORD': '',  
         'HOST': '127.0.0.1',  
@@ -152,3 +155,10 @@ FIREBASE_JSON = str(BASE_DIR / 'firebase.json')
 SESSION_COOKIE_AGE = 1800
 
 SESSION_SAVE_EVERY_REQUEST = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PORT = 25
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'durvaljunior117@gmail.com'
+EMAIL_HOST_PASSWORD = 'zfmn gqqm unvr wfxj'
