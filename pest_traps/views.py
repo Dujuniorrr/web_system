@@ -105,10 +105,14 @@ def create_pest_trap(request):
         
 @login_required
 def get_grouped_traps(request):
+    user = request.user
+    if request.user.is_superuser:
+        user = ClientProfile.objects.get(request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
+        
     last_week = datetime.today() - timedelta(days=7)
      
     grouped_traps = AnalysisLog.objects.filter(
-       pest_trap__in=PestTrap.objects.filter(user=request.user),
+       pest_trap__in=PestTrap.objects.filter(user=user),
         date__gte=last_week, date__lte=datetime.today()
     ).values('pest_trap__name').annotate(total_pests=Sum('pests_number'))
     

@@ -18,6 +18,15 @@ def superuser_required(view_func):
 
     return _wrapped_view
 
+def only_client_permited(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_superuser or not request.user.is_authenticated:
+            return redirect("/usuarios/login")
+        else:
+            return view_func(request, *args, **kwargs)
+
+    return _wrapped_view
+
 
 def send_code_by_email(instance, code):
     smtp_server = 'smtp.gmail.com'

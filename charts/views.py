@@ -6,10 +6,11 @@ from analysis_logs.models import AnalysisLog
 from pest_traps.models import PestTrap
 from django.db.models.functions import TruncDate, TruncWeek, TruncMonth, TruncYear
 from django.db.models import Avg
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
+from web_system.utils import only_client_permited
 from datetime import datetime
 
-@login_required
+@only_client_permited
 def index(request):
     return render(request, 'charts/index.html', {
         'pest_traps': PestTrap.objects.filter(user=request.user, analysislog__isnull=False ).distinct(),
@@ -17,7 +18,7 @@ def index(request):
     })
 
 
-@login_required
+@only_client_permited
 def column_chart_number_of_pests(request):
     def calculate_weekly_pests(month, year, pest_trap_filter):
         queryset = AnalysisLog.objects.filter(
@@ -62,7 +63,7 @@ def column_chart_number_of_pests(request):
 
     return JsonResponse(data)
 
-@login_required
+@only_client_permited
 def column_chart_average_temperature(request):
     def calculate_weekly_average_temperature(month, year, pest_trap_filter):
         queryset = AnalysisLog.objects.filter(
@@ -102,7 +103,7 @@ def column_chart_average_temperature(request):
 
     return JsonResponse(data)
 
-@login_required
+@only_client_permited
 def column_chart_average_pressure(request):
     def calculate_weekly_average_pressure(month, year, pest_trap_filter):
         queryset = AnalysisLog.objects.filter(
@@ -143,7 +144,7 @@ def column_chart_average_pressure(request):
 
     return JsonResponse(data)
 
-@login_required
+@only_client_permited
 def line_chart_number_of_pests(request):
     params_mapping = {
         'initial_date': 'date__gte',
@@ -153,7 +154,8 @@ def line_chart_number_of_pests(request):
     date_mapping = {
         'day': TruncDate('date'),
         'week': TruncWeek('date'),
-        'year': TruncYear('date')
+        'month': TruncMonth('date'),
+        'year': TruncYear('date'),
     }
 
     filters = {params_mapping[key]: request.GET[key] for key in params_mapping if request.GET.get(key)}
@@ -187,7 +189,7 @@ def line_chart_number_of_pests(request):
 
     return JsonResponse(data)
 
-@login_required
+@only_client_permited
 def line_chart_average_temperature(request):
     params_mapping = {
         'initial_date': 'date__gte',
@@ -197,6 +199,8 @@ def line_chart_average_temperature(request):
     date_mapping = {
         'day': TruncDate('date'),
         'week': TruncWeek('date'),
+        'month': TruncMonth('date'),
+
         'year': TruncYear('date')
     }
 
@@ -230,7 +234,7 @@ def line_chart_average_temperature(request):
 
     return JsonResponse(data)
 
-@login_required
+@only_client_permited
 def line_chart_average_pressure(request):
     params_mapping = {
         'initial_date': 'date__gte',
@@ -240,6 +244,7 @@ def line_chart_average_pressure(request):
     date_mapping = {
         'day': TruncDate('date'),
         'week': TruncWeek('date'),
+        'month': TruncMonth('date'),
         'year': TruncYear('date')
     }
 
@@ -273,11 +278,18 @@ def line_chart_average_pressure(request):
 
     return JsonResponse(data)
 
-@login_required
+@only_client_permited
 def scatter_chart(request):
     params_mapping = {
-        'initial_date': 'date__gte',
-        'final_date': 'date__lte',
+        'initialDate': 'date__gte',
+        'finalDate': 'date__lte',
+    }
+    
+    date_mapping = {
+        'day': TruncDate('date'),
+        'week': TruncWeek('date'),
+        'month': TruncMonth('date'),
+        'year': TruncYear('date')
     }
 
     filters = {params_mapping[key]: request.GET[key] for key in params_mapping if request.GET.get(key)}
@@ -290,7 +302,9 @@ def scatter_chart(request):
     queryset = AnalysisLog.objects.filter(
         pest_trap_filter,
         **filters
-    ).annotate(truncated_date= TruncDate('date')).values('truncated_date').annotate(avg=Avg(request.GET.get('xVariable', 'temperature')), total_pests=Sum('pests_number')).order_by('truncated_date')
+    ).annotate(truncated_date= date_mapping.get(
+        request.GET.get('date_column', 'day')
+    )).values('truncated_date').annotate(avg=Avg(request.GET.get('xVariable', 'temperature')), total_pests=Sum('pests_number')).order_by('truncated_date')
 
     number_pests = {
         'min_value': 'avg__gte',

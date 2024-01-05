@@ -36,7 +36,7 @@
     <link rel="shortcut icon" href="{% static 'img/icon.png' %}" />
     <script src="https://kit.fontawesome.com/6a5dd2730c.js"></script>
   </head>
-  <body class="sidebar-icon-only">
+  <body class="sidebar-icon-only" >
     <div class="container-scroller">
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
@@ -82,6 +82,7 @@
               <span class="menu-title">Monitoramento</span>
             </a>
           </li>
+        {% if not request.user.is_superuser %}
           <li id="charts" class="nav-item menu-items">
             <a class="nav-link" href="/graficos">
               <span class="menu-icon">
@@ -90,6 +91,7 @@
               <span class="menu-title">Gráficos</span>
             </a>
           </li>
+          {% endif %}
           
           <!-- <li class="nav-item menu-items">
             <a class="nav-link" href="">
@@ -162,7 +164,7 @@
           </div>
         </nav>
         <!-- partial -->
-        <div class="main-panel">
+        <div id="main-container" class="main-panel">
           <div class="content-wrapper p-0"
         
           >

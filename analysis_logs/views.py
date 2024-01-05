@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from accounts.models import ClientProfile
 from analysis_logs.forms import AnalysisLogForm
 from analysis_logs.models import AnalysisLog
 from pest_traps.models import PestTrap
@@ -29,13 +30,17 @@ days_dict = {
 
 @login_required
 def get_data_by_day(request):
+    user = request.user
+    if request.user.is_superuser:
+        user = ClientProfile.objects.get(request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
+        
     today = datetime.today()
     last_week = today - timedelta(days=7)
     # last_week_start = today - timedelta(days=today.weekday() + 14)
     # last_week_end = last_week_start + timedelta(days=6)
 
     data_by_day = AnalysisLog.objects.filter(
-        pest_trap__in=PestTrap.objects.filter(user=request.user),
+        pest_trap__in=PestTrap.objects.filter(user=user),
         # date__gte=last_week_start,
         # date__lte=last_week_end
         date__gte=last_week,
@@ -68,10 +73,14 @@ def get_data_by_day(request):
 
 @login_required
 def get_number_pests_by_day(request):
+    user = request.user
+    if request.user.is_superuser:
+        user = ClientProfile.objects.get(request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
+        
     last_week = datetime.today() - timedelta(days=7)
     
     pests_by_day = AnalysisLog.objects.filter(
-        pest_trap__in=PestTrap.objects.filter(user=request.user),
+        pest_trap__in=PestTrap.objects.filter(user=user),
         date__gte=last_week,
         date__lte=datetime.today()
     ).annotate(day_of_week=ExtractWeekDay('date')) 

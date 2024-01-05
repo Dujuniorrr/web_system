@@ -6,7 +6,7 @@ Painel
 {% endblock %}
 
 {% block content %}
-<div class="m-3">
+<div class="m-3" >
   <div class="mb-4 d-flex col-12 justify-content-between">
     <h2>
       Relátorio Semanal
@@ -15,6 +15,32 @@ Painel
       <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Gerar PDF
     </button>
   </div>
+
+  {% if request.user.is_superuser %}
+  <div class="container-col-12 mb-3">
+
+<form id="filter-traps" action="/armadilhas" method="GET" class="d-flex align-items-center mx-2" >
+  
+  
+  <div id="filterSelect" style="background-color: #0f1015;"  id="top-options" class="mb-0 ms-0 col-3 form-group d-block px-3 rounded-pill">
+  <select style="display: block;" name="user" id="id_user_filter" class="form-control dark">
+    {% for user in users %}
+    <option value="{{user.user.id}}" >
+      
+  
+      {{user.user.first_name}} {{user.user.last_name}} ({{ user.cpf }})
+    
+    </option>
+    {% endfor %}
+  </select>
+  </div>
+
+</form>
+</div>
+
+{% endif %}
+
+
   <div id="week" class="row">
     <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
       <div class="card  shadow-sm">
@@ -169,6 +195,7 @@ Painel
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
 <script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 
@@ -176,6 +203,19 @@ Painel
   pestsByDay();
   varsByWeek();
   actualDay();
+
+ 
+    document.getElementById('id_user_filter').addEventListener('change', ()=>{
+      fetch('user='+document.getElementById('id_user_filter').value)
+      .then(response => response.text())
+      .then(data => {
+        // Manipula a resposta da requisição aqui, se necessário
+        atualizeContent('week');
+      })
+      .catch(error => {
+        console.error('Erro na requisição:', error);
+      });
+    });
 
   async function pestsByDay() {
     const res = await fetch('/monitoramentos/semana/dias');
@@ -332,7 +372,12 @@ Painel
     month = month < 10 ? '0' + month : month;
     day = (day < 10) ? '0' + day : day;
 
-    document.getElementById('actualDay').textContent = day + '/' + month + '/' + year;
+    try{
+      document.getElementById('actualDay').textContent = day + '/' + month + '/' + year;
+    }
+    catch(e){
+      
+    }
 
   }
 

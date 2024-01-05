@@ -70,6 +70,26 @@
                     </div>
 
                     <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="initialDate" class="form-label">Data inicial</label>
+                        <input name="initialDate" type="date" class="form-control dark bg-light" id="initialDate" aria-describedby="emailHelp">
+                    </div>
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="finalDate" class="form-label">Data Final</label>
+                        <input name="finalDate" type="date" class="form-control dark bg-light" id="finalDate" aria-describedby="emailHelp">
+                    </div>
+
+
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
+                        <label for="dateColumn" class="form-label">Agrupar por:</label>
+                        <select id="dateColumn" name="date_column" class="form-select col-auto form-control dark bg-light">
+                            <option value="day">Dia</option>
+                            <option value="week">Semana</option>
+                            <option value="month">Mês</option>
+                            <option value="year">Ano</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 col-12 col-md-6 col-lg-3">
                         <label for="pestTrap" class="form-label">Armadilhas:</label>
                         <select id="pestTrap" name="pest_trap" class="form-select col-auto form-control dark bg-light">
                             <option value="">Todas</option>
@@ -80,7 +100,7 @@
                     </div>
                 </form>
             </div>
-            <div>
+            <div class="mt-4">
                 <div class="card w-100 h-100">
                     <canvas id="scatterChart" class="mx-1" style="width: 300px; height: 300px;"></canvas>
                 </div>
