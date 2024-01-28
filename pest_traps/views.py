@@ -107,7 +107,7 @@ def create_pest_trap(request):
 def get_grouped_traps(request):
     user = request.user
     if request.user.is_superuser:
-        user = ClientProfile.objects.get(request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
+        user = ClientProfile.objects.get(user_id=request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
         
     last_week = datetime.today() - timedelta(days=7)
      

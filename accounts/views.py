@@ -60,7 +60,7 @@ def active_user(request, id):
 
 @superuser_required
 def list_users(request):
-    users = User.objects.all()
+    users = User.objects.all().exclude(pk=request.user.pk)
      
     search = request.GET.get('searchField', None)
     if search:

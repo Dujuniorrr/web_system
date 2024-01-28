@@ -16,4 +16,4 @@ class AnalysisLog(models.Model):
         verbose_name = "Monitoramento"
         
     def __str__(self) -> str:
-        return f'Monitoratemndo ({self.date}'
+        return f'Monitoramento ({self.date}'

@@ -43,7 +43,7 @@ Painel
 
   <div id="week" class="row">
     <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-      <div class="card  shadow-sm">
+      <div class="card shadow-sm">
         <div class="card-body">
           <div class="row">
             <div class="col-9">
@@ -206,20 +206,33 @@ Painel
 
  
     document.getElementById('id_user_filter').addEventListener('change', ()=>{
-      fetch('user='+document.getElementById('id_user_filter').value)
+      fetch('?user='+document.getElementById('id_user_filter').value)
       .then(response => response.text())
       .then(data => {
-        // Manipula a resposta da requisição aqui, se necessário
-        atualizeContent('week');
+        replaceContent(data, '#week');
+        user = document.getElementById('id_user_filter').value
+        groupTrap(user);
+        pestsByDay(user);
+        varsByWeek(user);
+        actualDay();
       })
       .catch(error => {
         console.error('Erro na requisição:', error);
       });
     });
 
-  async function pestsByDay() {
-    const res = await fetch('/monitoramentos/semana/dias');
+  async function pestsByDay(user=false) {
+    if (!user){
+      var url = '/monitoramentos/semana/dias';
+    }
+    else{
+      var url = '/monitoramentos/semana/dias?user='+user;
+    }
+
+    const res = await fetch(url);
+
     var json = await res.json();
+
 
     var ctx = document.getElementById('pestsByDay').getContext('2d');
 
@@ -255,8 +268,15 @@ Painel
     });
   }
 
-  async function groupTrap() {
-    const res = await fetch('/armadilhas/agrupar');
+  async function groupTrap(user=false) {
+    if (!user){
+     var url = '/armadilhas/agrupar';
+    }
+    else{
+      var url =  '/armadilhas/agrupar?user='+user;
+    }
+
+    const res = await fetch(url);
     var json = await res.json();
 
     var ctx = document.getElementById('trap').getContext('2d');
@@ -288,8 +308,16 @@ Painel
     });
   }
 
-  async function varsByWeek() {
-    const res = await fetch('/monitoramentos/semana/dias/linha');
+  async function varsByWeek(user=false) {
+    if (!user){
+      var url = '/monitoramentos/semana/dias/linha'
+    }
+    else{
+      var url = '/monitoramentos/semana/dias/linha?user='+user;
+    }
+
+    const res = await fetch(url);
+
     const json = await res.json();
 
     console.log(json);

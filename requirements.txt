@@ -2,7 +2,7 @@
 
 # python_version == 3.9.*
 
-Django == 3.2
+Django == 3.2.8
 
 # Adiciona as bibliotecas para envio de e-mail
 smtplib == 3.2.*

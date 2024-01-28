@@ -32,7 +32,7 @@ days_dict = {
 def get_data_by_day(request):
     user = request.user
     if request.user.is_superuser:
-        user = ClientProfile.objects.get(request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
+        user = ClientProfile.objects.get(user_id=request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
         
     today = datetime.today()
     last_week = today - timedelta(days=7)
@@ -75,7 +75,7 @@ def get_data_by_day(request):
 def get_number_pests_by_day(request):
     user = request.user
     if request.user.is_superuser:
-        user = ClientProfile.objects.get(request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
+        user = ClientProfile.objects.get(user_id=request.GET.get('user')).user if request.GET.get('user') else  ClientProfile.objects.filter(user__is_active=True).first().user
         
     last_week = datetime.today() - timedelta(days=7)
     
